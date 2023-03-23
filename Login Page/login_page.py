@@ -22,11 +22,12 @@ class LoginPage(tk.Frame):
         self.screen_width = self.window.winfo_screenwidth()
         self.screen_height = self.window.winfo_screenheight()
         print(self.screen_width, self.screen_height)
-        # set the window size to the screen size
+        print(LoginPage.__name__)
         self.window.geometry(f"{int(self.screen_width*3/4)}x{int(self.screen_height*3/4)}")
         self.window.configure(background="black")
         self.create_background()
         self.create_widgets()
+        self.move_in()
 
     def create_background(self):
         frameCnt = 12
@@ -40,7 +41,10 @@ class LoginPage(tk.Frame):
             ind += 1
             if ind == frameCnt:
                 ind = 0
-            self.label.configure(image=frame)
+            try:
+                self.label.configure(image=frame)
+            except:
+                return
             self.window.after(100, update, ind)
         self.label = tk.Label(self.window, bg = "black")
         self.label.place(x = 400, y = 0)
@@ -72,8 +76,7 @@ class LoginPage(tk.Frame):
         self.button_login.place(relx=0.428, rely=0.72, anchor="center")
         self.button_forgot_password.place(relx=0.568, rely=0.72, anchor="center")
         self.button_signup.place(relx=0.511, rely=0.8, anchor="center")       
-        # if press button_signup, only the gif will be move slowly to the right for 5 seconds
-        self.button_signup.bind("<Button-1>", lambda event: self.move_gif(event, self.window, 5))
+        self.button_signup.bind("<Button-1>", lambda event: self.move_out(event, self.window, 5))
 
         # default state is hidden
         image = 'close_eye.png'
@@ -87,14 +90,26 @@ class LoginPage(tk.Frame):
         self.hide_password.place(relx=0.6, rely=0.651, anchor="center")        
         self.hide_password.bind("<Button-1>", lambda event: self.show_password(event, self.entry_password))
 
-    def move_gif(self, event, window, duration):
-        if self.label.winfo_x() is None:
+    def move_in(self):
+        x = 0
+        while x <= 400:
+            self.label.place(x=x, y=0)
+            x += 1
+            self.window.update()
+        self.label.place(x=400, y=0)
+        self.label.after_cancel(self.update)
+
+    def move_out(self, event, window, duration):
+        try:
+            if self.label.winfo_x() is None:
+                return
+            x = self.label.winfo_x()
+            self.label.place(x=x+40)
+            self.window.after(200, self.move_out, event, window, duration)
+            if x > 1200:
+                self.window.after(0, self.signup())
+        except:
             return
-        x = self.label.winfo_x()
-        self.label.place(x=x+40)
-        self.window.after(200, self.move_gif, event, window, duration)
-        if x > 1200:
-            self.window.after(0, self.signup())
 
     def login(self):
         username = self.entry_username.get()
@@ -137,21 +152,15 @@ class LoginPage(tk.Frame):
 
     def signup(self):
         self.destroy()
-        # destroy the label
         self.label.destroy()
-        #destroy the button
         self.button_signup.destroy()
         self.button_forgot_password.destroy()
         self.button_login.destroy()
-        #destroy the entry
         self.entry_username.destroy()
         self.entry_password.destroy()
-        #destroy the label
         self.label_username.destroy()
         self.label_password.destroy()
-        #destroy the hide password button
         self.hide_password.destroy()
-        # destroy everthing in self.window
         self.window.switch_frame(SignupPage)
     
     def forgot_password(self):
@@ -197,14 +206,29 @@ class SignupPage(tk.Frame):
 
     def move_gif(self):
         x = 0
-        while x <= 300:
+        while x <= 400:
             self.label1.place(x=x, y=0)
             x += 10
             self.window.update()
             time.sleep(0.1)
-        self.label1.place(x=300, y=0)
+        self.label1.place(x=400, y=0)
         self.label1.after_cancel(self.update)
 
+    def move_gif_to_end_screen(self, event, window, duration):
+        x = 400
+        try:
+            while x >= 0:
+                self.label1.place(x=x, y=0)
+                x += 10
+                self.window.update()
+                self.label1.place(x=0, y=0)
+                self.label1.after_cancel(self.update)
+                # print the location of the gif
+                print(self.label1.winfo_x())
+                if self.label1.winfo_x() > 2000:
+                    self.window.after(0, self.login())
+        except:
+            pass
 
     def on_entry_focus_in(self, event, entry):
         if entry.get() == "This field is required":
@@ -257,85 +281,104 @@ class SignupPage(tk.Frame):
             entry["show"] = "*"
 
     def create_widgets(self):
-        self.label_name = tk.Label(self, text="Full Name", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_name = tk.Entry(self, width=28, font=("Inconsolata", 10), bd = 2)
+        self.label_name = tk.Label(self.window, text="Full Name", font=("Inconsolata", 14), background="black", foreground="white")
+        self.entry_name = tk.Entry(self.window, width=28, font=("Inconsolata", 10), bd = 2, fg = "black", bg = "white")
         self.entry_name.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_name))
         self.entry_name.bind("<FocusOut>", lambda event: self.on_entry_focus_out(event, self.entry_name))
         self.entry_name.bind("<Key>", lambda event: self.validate_user(event, self.entry_name, "^[\w\s]+$"))
 
-        self.label_dob = tk.Label(self, text="Date of Birth", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_dob = tk.Entry(self, width=28, font=("Inconsolata", 10), bd = 2)
+        self.label_dob = tk.Label(self.window, text="Date of Birth", font=("Inconsolata", 14), background="black", foreground="white")
+        self.entry_dob = tk.Entry(self.window, width=28, font=("Inconsolata", 10), bd = 2)
         self.entry_dob.insert(0, "DD/MM/YYYY")
         self.entry_dob.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_dob))
         self.entry_dob.bind("<FocusOut>", lambda event: self.on_entry_focus_out(event, self.entry_dob))
         self.entry_dob.bind("<Key>", lambda event: self.validate_user(event, self.entry_dob, '^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$'))
 
-        self.label_email = tk.Label(self, text="Email", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_email = tk.Entry(self, width=28, font=("Inconsolata", 10), bd = 2)
+        self.label_email = tk.Label(self.window, text="Email", font=("Inconsolata", 14), background="black", foreground="white")
+        self.entry_email = tk.Entry(self.window, width=28, font=("Inconsolata", 10), bd = 2)
         self.entry_email.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_email))
         self.entry_email.bind("<FocusOut>", lambda event: self.validate_email(event, self.entry_email))
 
-        self.label_phone = tk.Label(self, text="Phone Number", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_phone = tk.Entry(self, width=28, font=("Inconsolata", 10), bd = 2)
+        self.label_phone = tk.Label(self.window, text="Phone Number", font=("Inconsolata", 14), background="black", foreground="white")
+        self.entry_phone = tk.Entry(self.window, width=28, font=("Inconsolata", 10), bd = 2)
         self.entry_phone.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_phone))
         self.entry_phone.bind("<FocusOut>", lambda event: self.on_entry_focus_out(event, self.entry_phone))
 
-        self.label_address = tk.Label(self, text="Address", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_address = tk.Entry(self, width=28, font=("Inconsolata", 10), bd = 2)
+        self.label_address = tk.Label(self.window, text="Address", font=("Inconsolata", 14), background="black", foreground="white")
+        self.entry_address = tk.Entry(self.window, width=28, font=("Inconsolata", 10), bd = 2)
         self.entry_address.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_address))
         self.entry_address.bind("<FocusOut>", lambda event: self.on_entry_focus_out(event, self.entry_address))
 
-        self.label_username = tk.Label(self, text="Username", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_username = tk.Entry(self, width=28, font=("Inconsolata", 10), bd = 2)
+        self.label_username = tk.Label(self.window, text="Username", font=("Inconsolata", 14), background="black", foreground="white")
+        self.entry_username = tk.Entry(self.window, width=28, font=("Inconsolata", 10), bd = 2)
         self.entry_username.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_username))
         self.entry_username.bind("<FocusOut>", lambda event: self.on_entry_focus_out(event, self.entry_username))
 
-        self.label_password = tk.Label(self, text="Password", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_password = tk.Entry(self, show="*", width=28, font=("Inconsolata", 10), bd = 2)
+        self.label_password = tk.Label(self.window, text="Password", font=("Inconsolata", 14), background="black", foreground="white")
+        self.entry_password = tk.Entry(self.window, show="*", width=28, font=("Inconsolata", 10), bd = 2)
         self.entry_password.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_password))
         self.entry_password.bind("<FocusOut>", lambda event: self.validate_password(event, self.entry_password))
-        #create an eye icon to show the password
-        # default state is hidden
+        
+        #create an eye icon to show the password default state is hidden
         image = 'close_eye.png'
         #create an image object
         file_path = os.path.join(os.path.dirname(__file__), image)
         self.hide_password_icon = tk.PhotoImage(file=file_path)
         #resize the image
-        self.hide_password_icon = self.hide_password_icon.subsample(7, 7)
+        self.hide_password_icon = self.hide_password_icon.subsample(9, 9)
         #create a label to display the image
-        self.hide_password = tk.Button(self, image=self.hide_password_icon, background="#ffffff", bd = 0)
-        self.hide_password.place(relx=0.85, rely=0.671, anchor="center")        
+        self.hide_password = tk.Button(self.window, image=self.hide_password_icon, background="#ffffff", bd = 0)
+        self.hide_password.place(relx=0.835, rely=0.771, anchor="center")        
         self.hide_password.bind("<Button-1>", lambda event: self.show_password(event, self.entry_password))
 
-        self.button_signup = tk.Button(self, text="Sign Up", command=self.signup)
-        self.button_back = tk.Button(self, text="Back", command=self.login)
+        self.button_signup = tk.Button(self.window, text="Sign Up", command=self.signup)
+        self.button_back = tk.Button(self.window, text="Back")
+        self.button_back.bind("<Button-1>", lambda event: self.move_gif_to_end_screen(event, self.window, 5))
 
         #pack widgets and set the position on the background
-        self.label_name.place(relx=0.7435, rely=0.15, anchor="ne")
-        self.entry_name.place(relx=0.758, rely=0.201, anchor="center")
+        self.label_name.place(relx=0.7435, rely=0.1, anchor="ne")
+        self.entry_name.place(relx=0.758, rely=0.181, anchor="center")
 
-        self.label_dob.place(relx=0.773, rely=0.23, anchor="ne")
-        self.entry_dob.place(relx=0.758, rely=0.281, anchor="center")
+        self.label_dob.place(relx=0.773, rely=0.2, anchor="ne")
+        self.entry_dob.place(relx=0.758, rely=0.271, anchor="center")
 
-        self.label_email.place(relx=0.7155, rely=0.301, anchor="ne")
-        self.entry_email.place(relx=0.758, rely=0.351, anchor="center")
+        self.label_email.place(relx=0.71, rely=0.3, anchor="ne")
+        self.entry_email.place(relx=0.758, rely=0.371, anchor="center")
 
-        self.label_phone.place(relx=0.765, rely=0.38, anchor="ne")
-        self.entry_phone.place(relx=0.758, rely=0.431, anchor="center")
+        self.label_phone.place(relx=0.765, rely=0.4, anchor="ne")
+        self.entry_phone.place(relx=0.758, rely=0.471, anchor="center")
 
-        self.label_address.place(relx=0.73, rely=0.46, anchor="ne")
-        self.entry_address.place(relx=0.758, rely=0.511, anchor="center")
+        self.label_address.place(relx=0.727, rely=0.5, anchor="ne")
+        self.entry_address.place(relx=0.758, rely=0.571, anchor="center")
 
-        self.label_username.place(relx=0.738, rely=0.54, anchor="ne")
-        self.entry_username.place(relx=0.758, rely=0.591, anchor="center")
+        self.label_username.place(relx=0.738, rely=0.6, anchor="ne")
+        self.entry_username.place(relx=0.758, rely=0.671, anchor="center")
 
-        self.label_password.place(relx=0.738, rely=0.62, anchor="ne")
-        self.entry_password.place(relx=0.758, rely=0.671, anchor="center")
+        self.label_password.place(relx=0.738, rely=0.7, anchor="ne")
+        self.entry_password.place(relx=0.758, rely=0.771, anchor="center")
 
-        self.button_signup.place(relx=0.74, rely=0.70, anchor="ne")
-        self.button_back.place(relx=0.78, rely=0.70, anchor="nw")
+        self.button_signup.place(relx=0.715, rely=0.83, anchor="ne")
+        self.button_back.place(relx=0.815, rely=0.83, anchor="nw")
 
     def login(self):
+        self.label_name.destroy()
+        self.entry_name.destroy()
+        self.label_dob.destroy()
+        self.entry_dob.destroy()
+        self.label_email.destroy()
+        self.entry_email.destroy()
+        self.label_phone.destroy()
+        self.entry_phone.destroy()
+        self.label_address.destroy()
+        self.entry_address.destroy()
+        self.label_username.destroy()
+        self.entry_username.destroy()
+        self.label_password.destroy()
+        self.entry_password.destroy()
+        self.button_signup.destroy()
+        self.button_back.destroy()
+        self.hide_password.destroy()
+        self.label1.destroy()
         self.destroy()
         self.window.switch_frame(LoginPage)
 
