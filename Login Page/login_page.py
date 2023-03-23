@@ -40,11 +40,11 @@ class LoginPage(tk.Frame):
             ind += 1
             if ind == frameCnt:
                 ind = 0
-            label.configure(image=frame)
+            self.label.configure(image=frame)
             self.window.after(100, update, ind)
-        label = tk.Label(self, bg = "black")
-        label.place()
-        label.pack(padx=0, pady=0, fill="both", expand=True, side="top", anchor="n")
+        self.label = tk.Label(self.window, bg = "black")
+        self.label.place(x = 400, y = 0)
+        # label.pack(padx=0.5, pady=1, fill="both", expand=True, side="top", anchor="n")
         self.window.after(0, update, 0)
 
     def show_password(self, event, entry):
@@ -63,7 +63,7 @@ class LoginPage(tk.Frame):
 
         self.button_login = tk.Button(self.window, text="Login", command=self.login)
         self.button_forgot_password = tk.Button(self.window, text= "Forgot password?", command=self.forgot_password, activeforeground="blue")
-        self.button_signup = tk.Button(self.window, text="Don't have an account? Sign Up", command=self.signup, width=32, bg = "#ffffff", bd = 0, font=("Inconsolata", 10), underline= 1, activeforeground="red")
+        self.button_signup = tk.Button(self.window, text="Don't have an account? Sign Up", width=32, bg = "#ffffff", bd = 0, font=("Inconsolata", 10), underline= 1, activeforeground="red")
 
         self.label_username.place(relx=0.483, rely=0.5, anchor="e")
         self.entry_username.place(relx=0.41, rely=0.55, anchor="w")
@@ -88,12 +88,13 @@ class LoginPage(tk.Frame):
         self.hide_password.bind("<Button-1>", lambda event: self.show_password(event, self.entry_password))
 
     def move_gif(self, event, window, duration):
-        # move the gif to the right for 5 seconds
-        for i in range(duration):
-            # move the gif to the right not the window
-            self.frames = self.frames[1:] + self.frames[:1]
-            self.label.configure(image=self.frames[0])
-            time.sleep(1)
+        if self.label.winfo_x() is None:
+            return
+        x = self.label.winfo_x()
+        self.label.place(x=x+40)
+        self.window.after(200, self.move_gif, event, window, duration)
+        if x > 1200:
+            self.window.after(0, self.signup())
 
     def login(self):
         username = self.entry_username.get()
@@ -136,6 +137,21 @@ class LoginPage(tk.Frame):
 
     def signup(self):
         self.destroy()
+        # destroy the label
+        self.label.destroy()
+        #destroy the button
+        self.button_signup.destroy()
+        self.button_forgot_password.destroy()
+        self.button_login.destroy()
+        #destroy the entry
+        self.entry_username.destroy()
+        self.entry_password.destroy()
+        #destroy the label
+        self.label_username.destroy()
+        self.label_password.destroy()
+        #destroy the hide password button
+        self.hide_password.destroy()
+        # destroy everthing in self.window
         self.window.switch_frame(SignupPage)
     
     def forgot_password(self):
@@ -147,12 +163,15 @@ class SignupPage(tk.Frame):
         super().__init__(window)
         self.window = window
         self.window.title("Sign Up")
-        global screen_width, screen_height
-        self.screen_width = self.window.winfo_screenwidth()
-        self.screen_height = self.window.winfo_screenheight()
-        self.window.geometry(f"{int(self.screen_width*3/4)}x{int(self.screen_height*3/4)}")
+        global screen_width1, screen_height1
+        self.screen_width1 = self.window.winfo_screenwidth()
+        self.screen_height1 = self.window.winfo_screenheight()
+        self.window.geometry(f"{int(self.screen_width1*3/4)}x{int(self.screen_height1*3/4)}")
+        self.window.resizable(False, False)
+        self.window.configure(background="black")
         self.create_background()
         self.create_widgets()
+        self.move_gif()
 
     def create_background(self):
         frameCnt = 12
@@ -160,18 +179,32 @@ class SignupPage(tk.Frame):
         file_path = os.path.join(os.path.dirname(__file__), file_name)
         frames = [tk.PhotoImage(file=file_path, format=f"gif -index {i}") for i in range(frameCnt)]
         for i in range(frameCnt):
-            frames[i] = frames[i].subsample(2, 2)
+            frames[i] = frames[i].subsample(1, 1)
+
+        self.label1 = tk.Label(self.window, bg="black")
+        self.label1.place(relx=0, rely=0.5, anchor="center")
+
         def update(ind):
             frame = frames[ind]
             ind += 1
             if ind == frameCnt:
                 ind = 0
-            label.configure(image=frame)
+            self.label1.configure(image=frame)
             self.window.after(100, update, ind)
-        label = tk.Label(self, bg = "black")
-        label.place()
-        label.pack(padx=0, pady=0, fill="both", expand=True, side="top", anchor="n")
-        self.window.after(0, update, 0)
+
+        self.update = update
+        self.window.after(0, self.update, 0)
+
+    def move_gif(self):
+        x = 0
+        while x <= 300:
+            self.label1.place(x=x, y=0)
+            x += 10
+            self.window.update()
+            time.sleep(0.1)
+        self.label1.place(x=300, y=0)
+        self.label1.after_cancel(self.update)
+
 
     def on_entry_focus_in(self, event, entry):
         if entry.get() == "This field is required":
