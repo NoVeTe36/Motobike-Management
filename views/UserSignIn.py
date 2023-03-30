@@ -112,7 +112,6 @@ class UserRestorePassword:
         cur.close()
         self.conn.close()
 
-
     def check_code(self, code1):
         if code1 == '':
             return False
