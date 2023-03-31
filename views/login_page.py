@@ -3,12 +3,14 @@ from tkinter import ttk
 from tkinter import messagebox
 import mysql.connector
 import pymysql
-import UserSignIn
+# import UserSignIn
+# import interface
 import os
 import re
 from hashlib import sha256
 import time
-import interface
+from views.UserSignIn import UserSignIn as UserSignIn
+import views.interface as interface
 
 class LoginPage(tk.Frame):
     def __init__(self, window):
@@ -41,10 +43,9 @@ class LoginPage(tk.Frame):
                 self.label.configure(image=frame)
             except:
                 return
-            self.window.after(100, update, ind)
+            self.window.after(50, update, ind)
         self.label = tk.Label(self.window, bg = "#cc0000")
-        self.label.place(x = 400, y = 0)
-        # label.pack(padx=0.5, pady=1, fill="both", expand=True, side="top", anchor="n")
+        self.label.place(x = 10, y = 0)
         self.window.after(0, update, 0)
 
     def show_password(self, event, entry):
@@ -62,7 +63,7 @@ class LoginPage(tk.Frame):
         self.entry_password = tk.Entry(self.window, show="*", width=32, font=("Inconsolata", 10), background="white", bd = 2, foreground="black")
 
         self.button_login = tk.Button(self.window, text="Login", command=self.login)
-        self.button_forgot_password = tk.Button(self.window, text= "Forgot password?", command=self.forgot_password, activeforeground="blue")
+        self.button_forgot_password = tk.Button(self.window, text= "Forgot password?", activeforeground="blue")
         self.button_signup = tk.Button(self.window, text="Don't have an account? Sign Up", width=32, bg = "#ffffff", bd = 0, font=("Inconsolata", 10), underline= 1, activeforeground="red")
 
         self.label_username.place(relx=0.483, rely=0.5, anchor="e")
@@ -73,6 +74,7 @@ class LoginPage(tk.Frame):
         self.button_forgot_password.place(relx=0.568, rely=0.72, anchor="center")
         self.button_signup.place(relx=0.511, rely=0.8, anchor="center")       
         self.button_signup.bind("<Button-1>", lambda event: self.move_out(event, self.window, 5))
+        self.button_forgot_password.bind("<Button-1>", lambda event: self.move_out_fg(event, self.window, 5))
 
         # default state is hidden
         image = '../img/close_eye.png'
@@ -100,10 +102,22 @@ class LoginPage(tk.Frame):
             if self.label.winfo_x() is None:
                 return
             x = self.label.winfo_x()
-            self.label.place(x=x+10)
-            self.window.after(50, self.move_out, event, window, duration)
+            self.label.place(x=x+30)
+            self.window.after(30, self.move_out, event, window, duration)
             if x > 1200:
                 self.window.after(0, self.signup())
+        except:
+            return
+        
+    def move_out_fg(self, event, window, duration):
+        try:
+            if self.label.winfo_x() is None:
+                return
+            x = self.label.winfo_x()
+            self.label.place(x=x+30)
+            self.window.after(30, self.move_out_fg, event, window, duration)
+            if x > 1200:
+                self.window.after(0, self.forgot_password())
         except:
             return
 
@@ -121,11 +135,9 @@ class LoginPage(tk.Frame):
         if username == "" or password == "":
             messagebox.showerror("Error", "Username or password is empty")
         try:
-            db = UserSignIn.UserSignIn()
+            db = UserSignIn()
             if db.authenticate(username, password):
                 messagebox.showinfo("Success", "Login successfully")
-                # switch to interface.py
-                
                 # create a new table to store the time of login
                 conn = mysql.connector.connect(
                     host="localhost",
@@ -142,7 +154,12 @@ class LoginPage(tk.Frame):
                 cur.execute("INSERT INTO login_history(username, time_login) VALUES(%s, %s)", (username, time_login))
                 conn.commit()
                 conn.close()
-                self.destroy()
+                # switch to interface.py
+                for widget in self.window.winfo_children():
+                    widget.destroy()
+                # self.destroy()
+                interface.Main(self.window)
+                self.window.mainloop()                
             else:
                 messagebox.showerror("Error", "Username or password is incorrect")
         except:
@@ -205,7 +222,10 @@ class SignupPage(tk.Frame):
             ind += 1
             if ind == frameCnt:
                 ind = 0
-            self.label1.configure(image=frame)
+            try:
+                self.label1.configure(image=frame)
+            except:
+                pass
             self.window.after(100, update, ind)
 
         self.update = update
@@ -215,9 +235,9 @@ class SignupPage(tk.Frame):
         x = 0
         while x <= 400:
             self.label1.place(x=x, y=0)
-            x += 20
+            x += 40
             self.window.update()
-            time.sleep(0.1)
+            time.sleep(0.08)
         self.label1.place(x=400, y=0)
         self.label1.after_cancel(self.update)
 
@@ -228,11 +248,9 @@ class SignupPage(tk.Frame):
                 self.label1.place(x=x, y=0)
                 x += 10
                 self.window.update()
-                self.label1.place(x=0, y=0)
                 self.label1.after_cancel(self.update)
-                # print the location of the gif
-                if self.label1.winfo_x() > 2000:
-                    self.window.after(0, self.login())
+                if x > 2000:
+                    self.window.after(10, self.login())
         except:
             pass
 
@@ -451,8 +469,7 @@ class ForgotPass(tk.Frame):
     def __init__(self, window):
         super().__init__(window)
         self.window = window
-        self.window.title("Login")
-        # find screen width and height
+        self.window.title("Forgot Password")
         global screen_width, screen_height
         self.screen_width = self.window.winfo_screenwidth()
         self.screen_height = self.window.winfo_screenheight()
@@ -481,7 +498,6 @@ class ForgotPass(tk.Frame):
             self.window.after(100, update, ind)
         self.label = tk.Label(self.window, bg = "#cc0000")
         self.label.place(x = 400, y = 0)
-        # label.pack(padx=0.5, pady=1, fill="both", expand=True, side="top", anchor="n")
         self.window.after(0, update, 0)
     
     def move_in(self):
@@ -493,6 +509,18 @@ class ForgotPass(tk.Frame):
         self.label.place(x=400, y=0)
         self.label.after_cancel(self.update)
 
+    def move_out(self, event, window, duration):
+        try:
+            if self.label.winfo_x() is None:
+                return
+            x = self.label.winfo_x()
+            self.label.place(x=x+30)
+            self.window.after(30, self.move_out, event, window, duration)
+            if x > 1200:
+                self.window.after(0, self.login())
+        except:
+            return
+
     def create_widgets(self):   
         #create a label to ask for the username
         self.label_username = ttk.Label(self.window, text="Username:", font=("Inconsolata", 14), background="#cc0000", foreground= "white")
@@ -503,7 +531,8 @@ class ForgotPass(tk.Frame):
 
         #create a button to send the email
         self.button_send = tk.Button(self.window, text="Send", command = self.process_request, width=10)
-        self.button_cancel = ttk.Button(self.window, text="Cancel", command=self.login, width=10)
+        self.button_cancel = ttk.Button(self.window, text="Cancel", width=10)
+        self.button_cancel.bind("<Button-1>", lambda event: self.move_out(event, self.window, 5))
         
         #pack widgets and set the position on the background
         self.label_username.place(relx=0.483, rely=0.5, anchor="e")
@@ -516,6 +545,7 @@ class ForgotPass(tk.Frame):
     def process_request(self):
         username = self.entry_username.get()
         email = self.entry_email.get()
+        print(username, email)
         if username == "" or email == "":
             messagebox.showerror("Error", "something is missing")
         else:
@@ -696,6 +726,7 @@ class ForgotPass(tk.Frame):
             self.button_cancel.destroy()
         except:
             pass
+        self.label.destroy()
         self.window.switch_frame(LoginPage)
 
 class MainApplication(tk.Tk):
@@ -711,12 +742,3 @@ class MainApplication(tk.Tk):
             self._frame.destroy()
         self._frame = new_frame
         self._frame.pack()
-
-if __name__ == "__main__":
-    app = MainApplication()
-    # change the icon of the application
-    file_name = "../img/icon.ico"
-    file_path = os.path.join(os.path.dirname(__file__), file_name)
-    app.iconbitmap(file_path)
-    app.title("Motorbike Management System")
-    app.mainloop()

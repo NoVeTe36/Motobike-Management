@@ -103,7 +103,7 @@ class UserRestorePassword:
         cur = self.conn.cursor()
         cur.execute('use motorbikemanagement')
         try:
-            cur.execute('DROP TABLE if exists code')
+            cur.execute('DROP TABLE if exists code_sent')
         except:
             pass
         cur.execute('CREATE TABLE code_sent (code VARCHAR(64))')

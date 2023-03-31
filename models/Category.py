@@ -29,7 +29,7 @@ class Category:
         except:
             pass
         sql = "insert into category (Name) values (%s)", (name)
-        self.cursor.execute(sql)
+        self.cursor.execute(sql, (name))
         # check if the category is already in database
         self.cursor.execute("select * from category where (Name = %s)", (name))
         result = self.cursor.fetchall()

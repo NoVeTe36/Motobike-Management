@@ -15,37 +15,6 @@ class HoverButton(tk.Button):
         self['bg'] = self['activebackground']
     def leave(self, e):
         self['bg'] = self.background
-        
-# class OptionButton(tk.Button):
-#     def __init__(self, master, text1, text2, bigFrame, **kw):
-#         self.window = bigFrame
-#         self.text1 = text1
-#         self.text2 = text2
-#         tk.Button.__init__(self, master=master, **kw)
-#         self.background = self['bg']
-#         self.bind("<Button-1>", self.click)
-#         self.bind("<Enter>", self.hover)
-#         self.bind("<Leave>", self.leave)
-#         self.display = False
-#         self.btn1 = None
-#         self.btn2 = None
-#     def click(self, e):
-#         if self.display == False:
-#             self.btn1 = HoverButton(self.window, width=26, fg="#fff", bg="#b20000", text=self.text1, font=('Helvetica', 13, 'bold'), bd=None, activebackground='#b20000', activeforeground = 'white', relief='flat')
-#             self.btn1.place(x=self.winfo_x()+270, y=self.winfo_y()+60)    
-#             self.btn2 = HoverButton(self.window, width=26, fg="#fff", bg="#b20000", text=self.text2, font=('Helvetica', 13, 'bold'), bd=None, activebackground='#b20000', activeforeground = 'white', relief='flat')
-#             self.btn2.place(x=self.winfo_x()+270, y=self.winfo_y()+60+32)
-#             self.display = True
-#         else:
-#             self.btn1.place_forget()
-#             self.btn2.place_forget()
-#             self.display = False   
-#     def hover(self, e):
-#         self['bg'] = self['activebackground']
-#     def leave(self, e):
-#         self['bg'] = self.background
-    
-        
 
 class Main:
     def __init__(self, root):
@@ -63,14 +32,6 @@ class Main:
         self.contentFrame = tk.Frame(self.window, width=1010, height=660, bg='#fff')
         self.contentFrame.place(x=270, y=60)
         
-        
-        # self.logoImg = Image.open("./img/motorbike.png")
-        # self.logoResizeImg = self.logoImg.resize((120, 120))
-        # self.logoResizeImg = ImageTk.PhotoImage(self.logoResizeImg)
-        # self.logo = tk.Label(navigationFrame, image=self.logoResizeImg, bg='#cc0000')
-        # self.logo.place(x=60, y=30)
-
-
         frameCnt = 12
         file_name = '../img/login_page.gif'
         file_path = os.path.join(os.path.dirname(__file__), file_name)
@@ -125,7 +86,6 @@ class Main:
     def move_in(self, navigationFrame):
         x = -200
         while x <= 16:
-            print(x)
             self.label.place(x=x, y=-40)
             x += 1
             time.sleep(0.01)
@@ -221,9 +181,7 @@ class Main:
         self.sportImg = ImageTk.PhotoImage(self.sportImg)
         self.sport = tk.Label(contentFrame, image=self.sportImg, bg='#ffffff', cursor='hand2')
         self.sport.place(x=380, y=390)
-        self.sport.bind('<Button-1>', directToSport)
-        
-          
+        self.sport.bind('<Button-1>', directToSport)       
         
     def displayAddProduct(self, contentFrame):
         self.clearFrame(contentFrame)
@@ -234,7 +192,7 @@ class Main:
         
         # Input for model name
         tk.Label(inputFrame, text="Model:",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=30, y=30)
-        modelInput = ttk.Entry(inputFrame, width=25, font=('Helvetica', 14))
+        modelInput = ttk.Entry(inputFrame, width=66, font=('Helvetica', 14))
         modelInput.place(x=120,y=30)
         
         # Options for brand
@@ -353,6 +311,9 @@ class Main:
     def displayManageProducts(self, contentFrame):
         self.clearFrame(contentFrame)   
         tk.Label(contentFrame, text="Manage products",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
+
+        inputFrame = tk.Frame(contentFrame, width=890, height=470, bg='#cccccc')
+        inputFrame.place(x=60, y=120)
         
     def displayNewOrder(self, contentFrame):   
         self.clearFrame(contentFrame)
@@ -373,18 +334,28 @@ class Main:
         modelInformationFrame = tk.Frame(contentFrame, height=290, width=890, bg='#cccccc')
         modelInformationFrame.place(x=60, y=330)
         tk.Label(modelInformationFrame, text="Product bought:",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=10, y=10)
+
+        def clearContent():
+            customerNameInput.delete(0, tk.END)
+            phoneInput.delete(0, tk.END)
+
+        def getContent():
+            pass
+
+        clearBtn = HoverButton(modelInformationFrame,text='Clear',bg='#cc0000', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#cc0000', activeforeground='#fff', relief='flat', command=clearContent)
+        clearBtn.place(x=690, y=250)
+
+        addBtn = HoverButton(modelInformationFrame,text='Add',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command=getContent)
+        addBtn.place(x=790,y=250)
         
     def displayManageOrders(self, contentFrame):
         self.clearFrame(contentFrame)
-        tk.Label(contentFrame, text="Orders history",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
-    
-
-            
+        tk.Label(contentFrame, text="Orders history",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)           
         
-def main():
-    root = tk.Tk()
-    program = Main(root)
-    root.mainloop()
+# def main():
+#     root = tk.Tk()
+#     program = Main(root)
+#     root.mainloop()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
