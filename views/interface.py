@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from PIL import Image, ImageTk
 import os, time
+import View
 
 class HoverButton(tk.Button):
     def __init__(self, master, **kw):
@@ -16,7 +17,7 @@ class HoverButton(tk.Button):
     def leave(self, e):
         self['bg'] = self.background
 
-class Main:
+class Main(View):
     def __init__(self, root):
         self.window = root
         self.window.geometry("1280x720+100+50")

@@ -28,7 +28,7 @@ class Brand:
             """)
         except:
             pass
-        sql = "insert into brand (Name) values (%s)", (name)
+        sql = "insert into Brand (Name) values (%s)", (name)
         self.cursor.execute(sql)
         # check if the brand is already in database
         self.cursor.execute("select * from brand where (Name = %s)", (name))

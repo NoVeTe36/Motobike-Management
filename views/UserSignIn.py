@@ -43,8 +43,8 @@ class UserRestorePassword:
             password="tungntl1234",
             database="motorbikemanagement"
         )
-        self.sender_email = 'tung30062003viet@gmail.com'
-        self.sender_password = 'inexjtosdktycubl'
+        self.sender_email = 'ml2groupproject@gmail.com'
+        self.sender_password = 'yybzjvmsyynkjbfl'
 
     def check_email(self, username, email):
         cur = self.conn.cursor()
@@ -101,7 +101,6 @@ class UserRestorePassword:
             database="motorbikemanagement"
         )
         cur = self.conn.cursor()
-        cur.execute('use motorbikemanagement')
         try:
             cur.execute('DROP TABLE if exists code_sent')
         except:

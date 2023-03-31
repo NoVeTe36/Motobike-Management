@@ -11,6 +11,7 @@ from hashlib import sha256
 import time
 from views.UserSignIn import UserSignIn as UserSignIn
 import views.interface as interface
+from views.UserSignIn import UserRestorePassword as UserRestorePassword
 
 class LoginPage(tk.Frame):
     def __init__(self, window):
@@ -543,19 +544,19 @@ class ForgotPass(tk.Frame):
         self.button_cancel.place(relx=0.579, rely=0.75, anchor="center")
 
     def process_request(self):
+        global username
         username = self.entry_username.get()
         email = self.entry_email.get()
-        print(username, email)
         if username == "" or email == "":
             messagebox.showerror("Error", "something is missing")
         else:
             try:
-                db = UserSignIn.UserRestorePassword()
+                db = UserRestorePassword()
                 if db.check_email(username, email):
-                    try:                        
+                    try:                       
                         db.send_email(email)
                         messagebox.showinfo("Success", "Email sent")
-                        self.enter_code()
+                        self.create_widgets2()
                     except:
                         messagebox.showerror("Error", "Error in sending email")
                 else:
@@ -564,31 +565,31 @@ class ForgotPass(tk.Frame):
                 messagebox.showerror("Error", "Error in connection")
                 return
 
-    def enter_code(self):
-        self.create_widgets2()
-
     def create_widgets2(self):
-        # destroy the previous widgets
+        self.label_username.destroy()
         self.label_username.destroy()
         self.label_email.destroy()
         self.entry_email.destroy()
         self.button_send.destroy()
         self.button_cancel.destroy()
         # create a new label and entry to ask for the code
-        self.label_code = ttk.Label(self.window, text="Code", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_code = tk.Entry(self.window, width=32, font=("Inconsolata", 10), background="#f0f3f4", bd = 2)
+        self.label_code = ttk.Label(self.window, text="Code", font=("Inconsolata", 14), background="#cc0000", foreground= "white")
+        self.entry_code = tk.Entry(self.window, width=20, font=("Inconsolata", 10), background="black", bd = 2, fg="black", bg= "white")
+
         self.button_confirm = tk.Button(self.window, text="Confirm", command = self.handle_confirm, width=10)
-        self.button_cancel = ttk.Button(self.window, text="Cancel", command=self.login, width=10)
-        self.label_code.place(relx=0.483, rely=0.5, anchor="ne")
-        self.entry_code.place(relx=0.41, rely=0.55, anchor="center")
-        self.button_confirm.place(relx=0.4572, rely=0.65, anchor="ne")
-        self.button_cancel.place(relx=0.41, rely=0.65, anchor="nw")
+        self.button_cancel = tk.Button(self.window, text="Cancel", command=self.login, width=10)
+
+        self.label_code.place(relx=0.483, rely=0.5, anchor="e")
+        self.entry_code.place(relx=0.45, rely=0.55, anchor="w")
+
+        self.button_confirm.place(relx=0.4572, rely=0.65, anchor="center")
+        self.button_cancel.place(relx=0.565, rely=0.65, anchor="center")
 
         # if the code is correct, create a new label and entry to ask for the new password
     def handle_confirm(self):
         # hash the code input by the user
         code1 = self.entry_code.get()        
-        if UserSignIn.UserRestorePassword().check_code(code1):
+        if UserRestorePassword().check_code(code1):
             self.create_widgets3()            
         else:
             messagebox.showerror("Error", "Wrong code") 
@@ -627,34 +628,30 @@ class ForgotPass(tk.Frame):
             entry["show"] = "*"
 
     def create_widgets3(self):
-        # destroy the previous widgets
         self.label_code.destroy()
         self.entry_code.destroy()
         self.button_confirm.destroy()
         self.button_cancel.destroy()
 
-        # create a new label and entry to ask for the new password
-        self.label_new_pass = ttk.Label(self, text="New Password", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_new_pass = tk.Entry(self, width=32, font=("Inconsolata", 10), background="#f0f3f4", bd = 2)
+        self.label_new_pass = ttk.Label(self.window, text="New Password:", font=("Inconsolata", 14), background="#cc0000", foreground= "white")
+        self.entry_new_pass = tk.Entry(self.window, show="*", width=32, font=("Inconsolata", 10), background="#f0f3f4", bd = 2)
         self.entry_new_pass.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_new_pass))
         self.entry_new_pass.bind("<FocusOut>", lambda event: self.validate_password(event, self.entry_new_pass))
 
-        self.label_confirm_pass = ttk.Label(self, text="Confirm Password", font=("Inconsolata", 14), background="#ffffff")
-        self.entry_confirm_pass = tk.Entry(self, width=32, font=("Inconsolata", 10), background="#f0f3f4", bd = 2)
+        self.label_confirm_pass = ttk.Label(self.window, text="Confirm Password", font=("Inconsolata", 14), background="#cc0000", foreground= "white")
+        self.entry_confirm_pass = tk.Entry(self.window, show="*", width=32, font=("Inconsolata", 10), background="#f0f3f4", bd = 2)
         self.entry_confirm_pass.bind("<FocusIn>", lambda event: self.on_entry_focus_in(event, self.entry_confirm_pass))
         self.entry_confirm_pass.bind("<FocusOut>", lambda event: self.validate_password(event, self.entry_confirm_pass))
 
-        self.button_confirm = tk.Button(self, text="Confirm", command = self.handle_password, width=10)
-        self.button_cancel = ttk.Button(self, text="Cancel", command=self.login, width=10)
+        self.button_confirm = tk.Button(self.window, text="Confirm", command = self.handle_password, width=10)
+        self.button_cancel = ttk.Button(self.window, text="Cancel", command=self.login, width=10)
 
-        self.label_new_pass.place(relx=0.715, rely=0.35, anchor="ne")
-        self.entry_new_pass.place(relx=0.758, rely=0.401, anchor="center")
-
-        self.label_confirm_pass.place(relx=0.715, rely=0.448, anchor="ne")
-        self.entry_confirm_pass.place(relx=0.758, rely=0.501, anchor="center")
-
-        self.button_confirm.place(relx=0.7385, rely=0.55, anchor="ne")
-        self.button_cancel.place(relx=0.78, rely=0.55, anchor="nw")
+        self.label_new_pass.place(relx=0.512, rely=0.5, anchor="e")
+        self.entry_new_pass.place(relx=0.41, rely=0.55, anchor="w")
+        self.label_confirm_pass.place(relx=0.536, rely=0.6, anchor="e")
+        self.entry_confirm_pass.place(relx=0.41, rely=0.65, anchor="w")
+        self.button_confirm.place(relx=0.4458, rely=0.75, anchor="center")
+        self.button_cancel.place(relx=0.579, rely=0.75, anchor="center")
 
         # default state is hidden
         image = '../img/close_eye.png'
@@ -662,10 +659,10 @@ class ForgotPass(tk.Frame):
         file_path = os.path.join(os.path.dirname(__file__), image)
         self.hide_password_icon = tk.PhotoImage(file=file_path)
         #resize the image
-        self.hide_password_icon = self.hide_password_icon.subsample(7, 7)
+        self.hide_password_icon = self.hide_password_icon.subsample(10, 10)
         #create a label to display the image
-        self.hide_password = tk.Button(self, image=self.hide_password_icon, background="#ffffff", bd = 0)
-        self.hide_password.place(relx=0.85, rely=0.401, anchor="center")        
+        self.hide_password = tk.Button(self.window, image=self.hide_password_icon, background="#ffffff", bd = 0)
+        self.hide_password.place(relx=0.6, rely=0.55, anchor="center")        
         self.hide_password.bind("<Button-1>", lambda event: self.show_password(event, self.entry_new_pass))
     
         # default state is hidden
@@ -674,22 +671,21 @@ class ForgotPass(tk.Frame):
         file_path1 = os.path.join(os.path.dirname(__file__), image1)
         self.hide_password_icon1 = tk.PhotoImage(file=file_path1)
         #resize the image
-        self.hide_password_icon1 = self.hide_password_icon1.subsample(7, 7)
+        self.hide_password_icon1 = self.hide_password_icon1.subsample(10, 10)
         #create a label to display the image
-        self.hide_password1 = tk.Button(self, image=self.hide_password_icon1, background="#ffffff", bd = 0)
-        self.hide_password1.place(relx=0.85, rely=0.501, anchor="center")
+        self.hide_password1 = tk.Button(self.window, image=self.hide_password_icon1, background="#ffffff", bd = 0)
+        self.hide_password1.place(relx=0.6, rely=0.65, anchor="center")
         self.hide_password1.bind("<Button-1>", lambda event: self.show_password(event, self.entry_confirm_pass))
 
     def handle_password(self):
         new_pass = self.entry_new_pass.get()
         confirm_pass = self.entry_confirm_pass.get()
-        user = self.entry_username.get()
 
         if new_pass == confirm_pass:
             try:
-                db = UserSignIn.UserRestorePassword()
+                db = UserRestorePassword()
                 #hash the new password
-                db.change_password(user, new_pass)
+                db.change_password(username, new_pass)
                 messagebox.showinfo("Success", "Password updated successfully") 
                 self.login()
             except:
@@ -727,6 +723,8 @@ class ForgotPass(tk.Frame):
         except:
             pass
         self.label.destroy()
+        self.hide_password.destroy()
+        self.hide_password1.destroy()
         self.window.switch_frame(LoginPage)
 
 class MainApplication(tk.Tk):
