@@ -131,16 +131,16 @@ class Product:
         return result
     
     def sort(self, index):
-        query = "select * from product order by " + index + ";"
+        query = "select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product order by " + index + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         return result
     
     def filter(self, index):
-        query = "select * from product order " + index + ";"
+        query = "select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product  order by " + index + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         return result
 
-    
+
     
