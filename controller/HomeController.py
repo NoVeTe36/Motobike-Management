@@ -99,9 +99,10 @@ class HomeController(Controller):
             for i in range(len(fields)):
                 product.append(fields[i].get())
             self.product.add(fields)
- #           self.brand.add(product)
+        if response == -1:
+            messagebox.showerror("Add brand", "Product already exists!")
         else: 
-            messagebox.showerror("Add brand", "Error while adding customer")
+            messagebox.showerror("Add brand", "Some fields are empty or wrong type!")
         for i in range(len(fields)):
             fields[i].delete = (0, 'end')
 
@@ -148,7 +149,7 @@ class HomeController(Controller):
         product_list = self.product.get_product_list()
         for i in range(0, len(product_list)):
             tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5], product_list[i][6], product_list[i][7], product_list[i][8], product_list[i][9], product_list[i][10], product_list[i][11], product_list[i][12], product_list[i][13]))
-            tree.bind("<<TreeviewSelect>>", self.on_select)
+            tree.bind("<Double-1>", self.on_select)
         # Scrollbar
         scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
         scrollBarY.place(x=950, y=0, height=440, width = 20)
@@ -156,8 +157,12 @@ class HomeController(Controller):
         scrollBarX = ttk.Scrollbar(contentFrame, orient="horizontal", command=tree.xview)
         scrollBarX.place(x=0, y=420, height=20, width = 970)
         tree.configure(xscrollcommand=scrollBarX.set)
-        return tree             
-    
+        return tree           
+
+    def reset_ProductList(self, tree, product_list, contentFrame):
+        tree.destroy()
+        tree = self.showTreeView_ProductList(contentFrame, product_list)  
+
     def showTreeView_OrderList(self, frame):
         style = ttk.Style()
         style.configure("Treeview", rowheight=25)
@@ -193,8 +198,14 @@ class HomeController(Controller):
         selected_item = event.widget.selection()[0]
         values = event.widget.item(selected_item)['values']
         
-        edit_view = EditView()
+        edit_view = self.loadView("edit",tk.Tk())
         edit_view.showEditView(values)
+
+    def on_delete(self, event):
+        selected_item = event.widget.selection()[0]
+        values = event.widget.item(selected_item)['values']
+        self.product.delete_product(values[0])
+        self.showTreeView_ProductList(self.contentFrame)
 
 #Filter display
     def filterDropCallback(self,contentFrame,filterDrop):
@@ -236,7 +247,7 @@ class HomeController(Controller):
         product_list = self.product.filter(filterDrop)
         for i in range(len(product_list)):
             tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5], product_list[i][6], product_list[i][7], product_list[i][8], product_list[i][9], product_list[i][10], product_list[i][11], product_list[i][12], product_list[i][13]))
-            tree.bind("<<TreeviewSelect>>", self.on_select)
+            tree.bind("<Double-1>", self.on_select)
         # Scrollbar
         scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
         scrollBarY.place(x=950, y=0, height=440, width = 20)
@@ -285,7 +296,8 @@ class HomeController(Controller):
         product_list = self.product.filter(sortDrop)
         for i in range(len(product_list)):
             tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5], product_list[i][6], product_list[i][7], product_list[i][8], product_list[i][9], product_list[i][10], product_list[i][11], product_list[i][12], product_list[i][13]))
-            tree.bind("<<TreeviewSelect>>", self.on_select)
+            tree.bind("<Double-1>", self.on_select)
+            tree.bind("<Delete>", self.on_delete)
         # Scrollbar
         scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
         scrollBarY.place(x=950, y=0, height=440, width = 20)
@@ -335,7 +347,7 @@ class HomeController(Controller):
         product_list = self.product.getName(name)
         for i in range(len(product_list)):
             tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5], product_list[i][6], product_list[i][7], product_list[i][8], product_list[i][9], product_list[i][10], product_list[i][11], product_list[i][12], product_list[i][13]))
-            tree.bind("<<TreeviewSelect>>", self.on_select)
+            tree.bind("<Double-1>", self.on_select)
         # Scrollbar
         scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
         scrollBarY.place(x=950, y=0, height=440, width = 20)

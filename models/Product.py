@@ -121,14 +121,24 @@ class Product:
         for i in range(len(fields)):
             if fields[i].get() == "":
                 return 0
+        for field in fields:
+            if field.get() == "":
+                return 0
+        self.cursor.execute("select * from product where (Name = %s)", (fields[0].get(),))
+        result = self.cursor.fetchall()
+        if result:
+            return -1
         return 1
     
     def get_product_list(self):
         self.cursor.execute("select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product")
         result = self.cursor.fetchall()
         self.db.commit()
-        print(result)
         return result
+    
+    def delete_product(self, name):
+        self.cursor.execute("delete from product where name = %s", (name,))
+        self.db.commit()
     
     def sort(self, index):
         query = "select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product order by " + index + ";"
@@ -137,7 +147,7 @@ class Product:
         return result
     
     def filter(self, index):
-        query = "select (name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity) from product  order by " + index + ";"
+        query = "select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product  order by " + index + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         return result
