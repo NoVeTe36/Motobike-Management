@@ -100,10 +100,10 @@ class Product:
         return response      
     
     def getName(self, name):
-        query = "SELECT * FROM product WHERE name LIKE %s;"
+        query = "SELECT name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity FROM product WHERE name LIKE %s;"
         self.cursor.execute(query, ('%' + name + '%',))
-        self.db.commit()
         result = self.cursor.fetchall()
+        self.db.commit()
         return result
     
     def get_brand_list(self):
@@ -137,7 +137,7 @@ class Product:
         return result
     
     def filter(self, index):
-        query = "select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product  order by " + index + ";"
+        query = "select (name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity) from product  order by " + index + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         return result

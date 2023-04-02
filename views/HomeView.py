@@ -293,47 +293,47 @@ class HomeView(tk.Tk, View):
         
         
     def displayManageProducts(self, contentFrame):
-            try:
-                self.tree.destroy()
-            except:
-                pass
-            self.clearFrame(contentFrame)   
-            tk.Label(contentFrame, text="Manage products",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
+        try:
+            self.tree.destroy()
+        except:
+            pass
+        self.clearFrame(contentFrame)   
+        tk.Label(contentFrame, text="Manage products",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
 
-            productFrame = tk.Frame(contentFrame, bg = "#cccccc")
-            productFrame.place(x=20, y=160, width=970, height=440)
+        productFrame = tk.Frame(contentFrame, bg = "#cccccc")
+        productFrame.place(x=20, y=160, width=970, height=440)
 
-            searchBar = ttk.Entry(contentFrame, font = ('Helvetica', 10))
-            searchBar.place(x=680, y=125, width=235, height=25)
+        searchBar = ttk.Entry(contentFrame, font = ('Helvetica', 10))
+        searchBar.place(x=680, y=125, width=235, height=25)
 
-            searchBtn = HoverButton(contentFrame, text = "Search", font =('Helvetica',10, 'bold'), bg = "#238636", fg = "#ffffff", bd = 0, command = lambda: None, activebackground = "#238636", activeforeground = "#ffffff", relief = "flat")
-            searchBtn.place(x=915, y=125, width=65, height=25)
+        searchBtn = HoverButton(contentFrame, text = "Search", font =('Helvetica',10, 'bold'), bg = "#238636", fg = "#ffffff", bd = 0, activebackground = "#238636", activeforeground = "#ffffff", relief = "flat",command = lambda: self.homeController.btnSearch_product(productFrame, searchBar.get()))
+        searchBtn.place(x=915, y=125, width=65, height=25)
 
-            filterDrop = ttk.Combobox(contentFrame, values=['Brand', 'Category'], font = ('Helvetica', 10), state = "r")
-            filterDrop.set("Filter")
-            filterDrop.place(x=580, y=125, width=90, height=25)
-            def filterDropCallback(event):
-                if filterDrop.get() == 'Brand':
-                    new_tree = self.homeController.filterDropCallback(productFrame,'brand')
-                elif filterDrop.get() == 'Category':
-                    new_tree = self.homeController.filterDropCallback(productFrame,'category')
+        filterDrop = ttk.Combobox(contentFrame, values=['Brand', 'Category'], font = ('Helvetica', 10), state = "r")
+        filterDrop.set("Filter")
+        filterDrop.place(x=580, y=125, width=90, height=25)
+        def filterDropCallback(event):
+            if filterDrop.get() == 'Brand':
+                new_tree = self.homeController.filterDropCallback(productFrame,'brand')
+            elif filterDrop.get() == 'Category':
+                new_tree = self.homeController.filterDropCallback(productFrame,'category')
+            return new_tree
+        filterDrop.bind("<<ComboboxSelected>>", filterDropCallback)
+
+        sortDrop = ttk.Combobox(contentFrame,values=['Name', 'Price'] , font = ('Helvetica', 10), state = "r")
+        sortDrop.set("Sort")
+        sortDrop.place(x=480, y=125, width=90, height=25)
+        def sortDropCallback(event):
+            if sortDrop.get() == 'Name':
+                print("5")
+                new_tree = self.homeController.sortDropCallback(productFrame,'Name')
+            elif sortDrop.get() == 'Price':
+                new_tree = self.homeController.sortDropCallback(productFrame,'Selling_Price_M')
                 return new_tree
-            filterDrop.bind("<<ComboboxSelected>>", filterDropCallback)
+        sortDrop.bind("<<ComboboxSelected>>", sortDropCallback)
 
-            sortDrop = ttk.Combobox(contentFrame,values=['Name', 'Price'] , font = ('Helvetica', 10), state = "r")
-            sortDrop.set("Sort")
-            sortDrop.place(x=480, y=125, width=90, height=25)
-            def sortDropCallback(event):
-                if sortDrop.get() == 'Name':
-                    print("5")
-                    new_tree = self.homeController.sortDropCallback(productFrame,'Name')
-                elif sortDrop.get() == 'Price':
-                    new_tree = self.homeController.sortDropCallback(productFrame,'Selling_Price_M')
-                    return new_tree
-            sortDrop.bind("<<ComboboxSelected>>", sortDropCallback)
-
-            # Treeview
-            self.tree = self.homeController.showTreeView_ProductList(productFrame)
+        # Treeview
+        self.tree = self.homeController.showTreeView_ProductList(productFrame)
         
     def displayNewOrder(self, contentFrame):   
         self.clearFrame(contentFrame)
