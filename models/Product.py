@@ -137,9 +137,10 @@ class Product:
         return result
     
     def filter(self, index):
-        query = "select * from product where " + index + ";"
+        query = "select * from product order " + index + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         return result
+
     
     

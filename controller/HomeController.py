@@ -6,6 +6,7 @@ from models.Brand import Brand
 from models.Category import Category
 import tkinter as tk
 from tkinter import ttk
+from views.EditView import EditView as EditView
 
 """
     Main controller. It will be responsible for program's main screen behavior.
@@ -156,13 +157,46 @@ class HomeController(Controller):
         tree.configure(xscrollcommand=scrollBarX.set)
         return tree             
     
+    def showTreeView_OrderList(self, frame):
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=25)
+        tree = ttk.Treeview(frame, height=10)
+        tree["columns"] = ("edit_button", "order_id", "customer_id", "product_id", "quantity", "order_date", "delivery_date", "status")
+        tree.column("#0", width=50, stretch=False)
+        tree.column("order_id", width=0, stretch=False)
+        tree.column("customer_id", width=0, stretch=False)
+        tree.column("product_id", width=0, stretch=False)
+        tree.column("quantity", width=0, stretch=False)
+        tree.column("order_date", width=0, stretch=False)
+        tree.column("delivery_date", width=0, stretch=False)
+        tree.column("status", width=0, stretch=False)
+        tree.heading("#0", text="No.")
+        tree.heading("order_id", text="Order ID")
+        tree.heading("customer_id", text="Customer ID")
+        tree.heading("product_id", text="Product ID")
+        tree.heading("quantity", text="Quantity")
+        tree.heading("order_date", text="Order Date")
+        tree.heading("delivery_date", text="Delivery Date")
+        tree.heading("status", text="Status")
+        tree.place(x= 0, y = 0, width = 1000, height = 500)
+        # Scrollbar
+        scrollBarY = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+        scrollBarY.place(x=950, y=0, height=440, width = 20)
+        tree.configure(yscrollcommand=scrollBarY.set)
+        scrollBarX = ttk.Scrollbar(frame, orient="horizontal", command=tree.xview)
+        scrollBarX.place(x=0, y=420, height=20, width = 970)
+        tree.configure(xscrollcommand=scrollBarX.set)
+        return tree
+    
+    def on_select(self, event):
+        selected_item = event.widget.selection()[0]
+        values = event.widget.item(selected_item)['values']
+        
+        edit_view = EditView()
+        edit_view.showEditView(values)
+
     """
         @Override
     """
     def main(self):
         self.homeView.main()
-
-    def on_select(self, event):
-        selected_item = event.widget.selection()[0]
-        values = event.widget.item(selected_item)['values']
-        print(values)

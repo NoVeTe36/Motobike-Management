@@ -168,8 +168,6 @@ class HomeView(tk.Tk, View):
         self.manual.place(x=180, y=140)
         self.manual.bind('<Button-1>', directToManual)
         
-        
-        
         # Scooter Box
         def directToScooter(e):
             pass
