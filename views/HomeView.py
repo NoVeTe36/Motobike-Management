@@ -144,16 +144,14 @@ class HomeView(tk.Tk, View):
         # Label "Brand"
         tk.Label(contentFrame, text="Brand",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
         # Add new brand
-        tk.Label(contentFrame, text="Add brand",font=('Helvetica', 18, 'bold'), bg='#fff').place(x=120, y=120)
-        brandAddEntryBox = ttk.Entry(contentFrame, width=30, font=('Helvetica', 14))
-        brandAddEntryBox.place(x=180, y=160)
-        saveChangeBtn = HoverButton(contentFrame,text='Add brand',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat',command = lambda: self.homeController.btnAdd_Brand(brandAddEntryBox, tree, contentFrame))
-        saveChangeBtn.place(x=520,y=160)
-        
-        tk.Label(contentFrame, text="Brand list",font=('Helvetica', 18, 'bold'), bg='#fff').place(x=120, y=250)
-        tableFrame = tk.Frame(contentFrame, height=300, width=890, bg='#cccccc')
-        tableFrame.place(x=60, y=290)
+        brandAddEntryBox = ttk.Entry(contentFrame, font = ('Helvetica', 10))
+        brandAddEntryBox.place(x = 680, y = 125, width = 235, height = 25)
 
+        saveChangeBtn = HoverButton(contentFrame, text = "Add", bg = '#238686', fg = "#fff", font = ('Helvetica', 10, 'bold'), activebackground = '#238636', activeforeground = '#fff', relief = 'flat', command = lambda: self.homeController.btnAdd_Brand(brandAddEntryBox, tree, contentFrame))
+        saveChangeBtn.place(x = 915, y = 125, width = 65, height = 25)
+
+        # Show brand list
+        # Treeview
         tree = self.homeController.showTreeView_BrandList(contentFrame, self.homeController.brand.get_brand_list())   
     
     def displayCategory(self, contentFrame):
@@ -169,6 +167,7 @@ class HomeView(tk.Tk, View):
         self.manual = tk.Label(contentFrame, image=self.manualResizeImg, bg='#ffffff', cursor='hand2')
         self.manual.place(x=180, y=140)
         self.manual.bind('<Button-1>', directToManual)
+        
         
         
         # Scooter Box
@@ -287,59 +286,50 @@ class HomeView(tk.Tk, View):
         quantityInput.place(x=230,y=380)
         Field.append(quantityInput)
 
-        
-        # # Get entry box content
-        # def getContent():
-        #     model = modelInput.get()
-        #     brand = brandOption.get()
-        #     category = categoryOption.get()
-        #     length = lengthInput.get()
-        #     width = widthInput.get()
-        #     height = heightInput.get()
-        #     mass = massInput.get()
-        #     fuelCapacity = fuelCapacityInput.get()
-        #     fuelConsumption = fuelConsumptionInput.get()
-        #     engineType = engineTypeInput.get()
-        #     maximalEfficiency = maximalEfficiencyInput.get()
-        #     color = colorInput.get()
-        #     sellingPrice = sellingPriceInput.get()
-        #     quantity = quantityInput.get()
-        #     atrribute = [model, brand, category, length, width, height, mass, fuelCapacity, fuelConsumption, engineType, maximalEfficiency, color, sellingPrice, quantity]
-        #     for i in atrribute:
-        #         if i == '':
-        #             messagebox.showwarning("warning", "Some boxes are not filled!")
-        #             return
         addBtn = HoverButton(inputFrame,text='Add',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command = lambda: self.homeController.btnAdd_Product(Field))
         addBtn.place(x=670, y = 420)
-        # Clear entry box content
-        # def clearContent():
-        #     modelInput.delete(0, tk.END)
-        #     brandOption.set('')
-        #     categoryOption.set('')
-        #     lengthInput.delete(0, tk.END)
-        #     widthInput.delete(0, tk.END)
-        #     heightInput.delete(0, tk.END)
-        #     massInput.delete(0, tk.END)
-        #     fuelCapacityInput.delete(0, tk.END)
-        #     fuelConsumptionInput.delete(0, tk.END)
-        #     engineTypeInput.delete(0, tk.END)
-        #     maximalEfficiencyInput.delete(0, tk.END)
-        #     colorInput.delete(0, tk.END)
-        #     sellingPriceInput.delete(0, tk.END)
-        #     quantityInput.delete(0, tk.END)
         
         # Clear button
         clearBtn = HoverButton(inputFrame,text='Clear',bg='#cc0000', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#cc0000', activeforeground='#fff', relief='flat', command = self.homeController.clearContent(Field))
-        clearBtn.place(x=770,y=420)
-        
+        clearBtn.place(x=770,y=420)       
         
         
     def displayManageProducts(self, contentFrame):
         self.clearFrame(contentFrame)   
         tk.Label(contentFrame, text="Manage products",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
 
-        inputFrame = tk.Frame(contentFrame, width=890, height=470, bg='#cccccc')
-        inputFrame.place(x=60, y=120)
+        productFrame = tk.Frame(contentFrame, bg = "#cccccc")
+        productFrame.place(x=20, y=160, width=970, height=440)
+
+        searchBar = ttk.Entry(contentFrame, font = ('Helvetica', 10))
+        searchBar.place(x=680, y=125, width=235, height=25)
+
+        searchBtn = HoverButton(contentFrame, text = "Search", font =('Helvetica',10, 'bold'), bg = "#238636", fg = "#ffffff", bd = 0, command = lambda: None, activebackground = "#238636", activeforeground = "#ffffff", relief = "flat")
+        searchBtn.place(x=915, y=125, width=65, height=25)
+
+        filterDrop = ttk.Combobox(contentFrame, values=['Brand', 'Category'], font = ('Helvetica', 10), state = "r")
+        filterDrop.set("Filter")
+        filterDrop.place(x=580, y=125, width=90, height=25)
+        def filterDropCallback(event):
+            if filterDrop.get() == 'Brand':
+                pass
+            elif filterDrop.get() == 'Category':
+                pass
+        filterDrop.bind("<<ComboboxSelected>>", filterDropCallback)
+
+        sortDrop = ttk.Combobox(contentFrame,values=['Name', 'Price'] , font = ('Helvetica', 10), state = "r")
+        sortDrop.set("Sort")
+        sortDrop.place(x=480, y=125, width=90, height=25)
+        def sortDropCallback(event):
+            if sortDrop.get() == 'Name':
+                pass
+            elif sortDrop.get() == 'Price':
+                pass
+        sortDrop.bind("<<ComboboxSelected>>", sortDropCallback)
+
+        # Treeview
+        tree = self.homeController.showTreeView_ProductList(productFrame, self.homeController.product.get_product_list())
+        return tree
         
     def displayNewOrder(self, contentFrame):   
         self.clearFrame(contentFrame)
@@ -376,7 +366,10 @@ class HomeView(tk.Tk, View):
         
     def displayManageOrders(self, contentFrame):
         self.clearFrame(contentFrame)
-        tk.Label(contentFrame, text="Orders history",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)           
+        tk.Label(contentFrame, text="Orders history",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)  
+
+        orderFrame = tk.Frame(contentFrame, bg = "#cccccc")
+        orderFrame.place(x=20, y=160, width=970, height=440) 
     def main(self):
         self.mainloop()
     def close(self):

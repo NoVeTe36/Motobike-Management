@@ -31,8 +31,8 @@ class Controller(metaclass=abc.ABCMeta):
         viewName = viewName[0].upper()+viewName[1:]+"View"
         
         # Check if file exists
-        if os.path.exists(APP_PATH+"/View/"+viewName+".py"):
-            module = importlib.import_module("View." + viewName)
+        if os.path.exists(APP_PATH+"/views/"+viewName+".py"):
+            module = importlib.import_module("views." + viewName)
             class_ = getattr(module, viewName)
             response = class_(self, root)
         

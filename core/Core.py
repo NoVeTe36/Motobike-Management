@@ -23,8 +23,8 @@ class Core:
         controllerName = controller+"Controller"
         print(controllerName)
         # Check if file exists
-        if os.path.exists(APP_PATH+"/Controller/"+controllerName+".py"):
-            module = importlib.import_module("Controller." + controllerName)
+        if os.path.exists(APP_PATH+"/controller/"+controllerName+".py"):
+            module = importlib.import_module("controller." + controllerName)
             class_ = getattr(module, controllerName)
             response = class_(root)
         else:

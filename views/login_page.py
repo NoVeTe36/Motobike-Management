@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 import mysql.connector
 import pymysql
+from core.Core import Core
 # import UserSignIn
 # import interface
 import os
@@ -10,7 +11,7 @@ import re
 from hashlib import sha256
 import time
 from views.UserSignIn import UserSignIn as UserSignIn
-import views.interface as interface
+from views.HomeView import HomeView as HomeView
 from views.UserSignIn import UserRestorePassword as UserRestorePassword
 
 class LoginPage(tk.Frame):
@@ -159,8 +160,11 @@ class LoginPage(tk.Frame):
                 for widget in self.window.winfo_children():
                     widget.destroy()
                 # self.destroy()
-                interface.Main(self.window)
-                self.window.mainloop()                
+                try:
+                    app = Core.openController("home", self.window)           
+                    app.main()
+                except Exception as e:
+                    print(e)
             else:
                 messagebox.showerror("Error", "Username or password is incorrect")
         except:
@@ -722,9 +726,12 @@ class ForgotPass(tk.Frame):
             self.button_cancel.destroy()
         except:
             pass
-        self.label.destroy()
-        self.hide_password.destroy()
-        self.hide_password1.destroy()
+        try:
+            self.label.destroy()
+            self.hide_password.destroy()
+            self.hide_password1.destroy()
+        except:
+            pass
         self.window.switch_frame(LoginPage)
 
 class MainApplication(tk.Tk):
