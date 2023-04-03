@@ -37,3 +37,17 @@ class Controller(metaclass=abc.ABCMeta):
             response = class_(self, root)
         
         return response
+    
+    def loadEdit(self, viewName, root, values):
+        response = None
+        
+        # Set view name
+        viewName = viewName[0].upper()+viewName[1:]+"View"
+        
+        # Check if file exists
+        if os.path.exists(APP_PATH+"/views/"+viewName+".py"):
+            module = importlib.import_module("views." + viewName)
+            class_ = getattr(module, viewName)
+            response = class_(self, root, values)
+        
+        return response

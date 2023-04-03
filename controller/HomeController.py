@@ -198,23 +198,6 @@ class HomeController(Controller):
         scrollBarX.place(x=0, y=420, height=20, width = 970)
         tree.configure(xscrollcommand=scrollBarX.set)
         return tree
-    
-    def on_select(self, event):
-        selected_item = event.widget.selection()[0]
-        values = event.widget.item(selected_item)['values']
-        
-        edit_view = self.loadView("edit",tk.Tk())
-        edit_view.showEditView(values)
-
-    def on_delete(self, event):    
-        selected_items = event.widget.selection()    
-        confirm = messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete the selected item(s)?")
-        if confirm:        
-            for item in selected_items:            
-                item_values = event.widget.item(item, "values")            
-                print(item_values[0])
-                self.product.delete_product(item_values[0])            
-                event.widget.delete(item)
 
     #Filter display
     def filterDropCallback(self,contentFrame,filterDrop):
@@ -366,13 +349,34 @@ class HomeController(Controller):
         tree.configure(xscrollcommand=scrollBarX.set)
         return tree     
 
-    def btnUpdate_Product(self, fields):
+    def btnUpdate_Product(self, fields, fields_old):
         # use update_product function from product class
-        self.product.update_product(fields)
-        if self.product.update_product(fields) != 0:
-            messagebox.showinfo("Success", "Product updated successfully")
+        for i in range(len(fields)):
+            fields[i] =  fields[i].get()
+        response = self.product.update_product(fields, fields_old)
+        if response == 1:
+            messagebox.showinfo("Success", "Update product successfully")
         else:
-            messagebox.showerror("Error", "Product update failed")
+            messagebox.showerror("Error", "Update product failed")
+
+
+    # Select item, double click to edit
+    def on_select(self, event):
+        selected_item = event.widget.selection()[0]
+        values = event.widget.item(selected_item)['values']
+        edit_view = self.loadEdit("edit",tk.Tk(), values)
+        # edit_view.showEditView(values)
+
+    # Delete item, press delete button to delete
+    def on_delete(self, event):    
+        selected_items = event.widget.selection()    
+        confirm = messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete the selected item(s)?")
+        if confirm:        
+            for item in selected_items:            
+                item_values = event.widget.item(item, "values")            
+                print(item_values[0])
+                self.product.delete_product(item_values[0])            
+                event.widget.delete(item)
 
     """
         @Override
