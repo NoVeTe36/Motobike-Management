@@ -54,7 +54,8 @@ class HomeView(tk.Tk, View):
             self.window.after(100, update, ind)
         self.label = tk.Label(navigationFrame, bg = "#cc0000")
         self.label.place(x = -200, y = -40)
-        self.window.after(0, update, 0)        
+        self.window.after(0, update, 0)     
+
 
         dashboardBtn = HoverButton(navigationFrame, width=26, fg="#fff", bg="#cc0000", text="Dashboard", font=('Helvetica', 15, 'bold'), bd=None, activebackground='#b20000', activeforeground = 'white', relief='flat', command=lambda: self.displayDashboard(self.contentFrame), cursor = 'hand2')
         dashboardBtn.place(x=-25, y=160)
@@ -95,42 +96,47 @@ class HomeView(tk.Tk, View):
             time.sleep(0.01)
             navigationFrame.update()
         self.label.place(x=16, y=-40)
-    
+
     # Dashboard content
     def displayDashboard(self, contentFrame):
         self.clearFrame(contentFrame)    
         tk.Label(contentFrame, text="Dashboard",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
+
+        contentFrameOne = tk.Frame(contentFrame, width=440, height=202, bg='#cc0000')
+        contentFrameOne.place(x=60, y=170)
+        self.totalProductImg = Image.open("./img/Total_products.png")
+        self.totalProductResizeImg = self.totalProductImg.resize((220, 202))
+        self.totalProductResizeImg = ImageTk.PhotoImage(self.totalProductResizeImg)
+        self.totalProduct = tk.Label(contentFrameOne, image=self.totalProductResizeImg, bg='#cc0000')
+        self.totalProduct.place(x=0, y=0)
+        tk.Label(contentFrameOne, text = self.homeController.get_sum_product(), font =("Helvetica", 40, 'bold'), bg = '#cc0000', fg='#ffffff').place(x = 270, y = 80)
         
-        # Create 4 frames to hold 4 gifs
-        frame1 = tk.Frame(contentFrame, width=440, height=202, bg='#cb2027')
-        frame1.place(x=60, y=170)
-        frame2 = tk.Frame(contentFrame, width=440, height=202, bg='#179648')
-        frame2.place(x=515, y=170)
-        frame3 = tk.Frame(contentFrame, width=440, height=202, bg='#263981')
-        frame3.place(x=60, y=400)
-        frame4 = tk.Frame(contentFrame, width=440, height=202, bg='#f58217')
-        frame4.place(x=515, y=400)   
-         
-        # productGift = "../img/product.gif"
-        # frameCnt = 12
-        # file_path = os.path.join(os.path.dirname(__file__), productGift)
-        # print(file_path)
-        # frames1 = [tk.PhotoImage(file=file_path, format=f"gif -index {i}") for i in range(frameCnt)]
-        # for i in range(frameCnt):
-        #     frames1[i] = frames1[i].subsample(3, 3)
-        # def update(ind):
-        #     frame1 = frames1[ind]
-        #     ind += 1
-        #     if ind == frameCnt:
-        #         ind = 0
-        #     try:
-        #         self.label.configure(image=frame1)
-        #     except:
-        #         return
-        #     self.contentFrame.after(100, update, ind)
-        # self.label1 = tk.Label(frame1, bg = "#cc0000")
-        # self.label1.place(x = -200, y = -40)
-        # self.contentFrame.after(0, update, 0)    
+        contentFrameTwo = tk.Frame(contentFrame, width=440, height=202, bg='#179648')
+        contentFrameTwo.place(x=515, y=170)
+        self.revenueImg = Image.open("./img/Revenue.png")
+        self.revenueResizeImg = self.revenueImg.resize((220, 202))
+        self.revenueResizeImg = ImageTk.PhotoImage(self.revenueResizeImg)
+        self.revenue = tk.Label(contentFrameTwo, image=self.revenueResizeImg, bg='#179648')
+        self.revenue.place(x=0, y=0)
+        tk.Label(contentFrameTwo, text = self.homeController.get_profit(), font =("Helvetica", 40, 'bold'), bg = '#179648', fg='#ffffff').place(x = 270, y = 80)
+        
+        contentFrameThree = tk.Frame(contentFrame, width=440, height=202, bg='#263981')
+        contentFrameThree.place(x=60, y=400)
+        self.brandsImg = Image.open("./img/Brands.png")
+        self.brandsResizeImg = self.brandsImg.resize((220, 202))
+        self.brandsResizeImg = ImageTk.PhotoImage(self.brandsResizeImg)
+        self.brands = tk.Label(contentFrameThree, image=self.brandsResizeImg, bg='#263981')
+        self.brands.place(x=0, y=0)
+        tk.Label(contentFrameThree, text = self.homeController.get_sum_brand(), font =("Helvetica", 40, 'bold'),bg='#263981', fg = '#ffffff').place(x = 350, y = 80)
+        
+        contentFrameFour = tk.Frame(contentFrame, width=440, height=202, bg='#f58217')
+        contentFrameFour.place(x=515, y=400)
+        self.soldProductsImg = Image.open("./img/Sold_products.png")
+        self.soldProductsResizeImg = self.soldProductsImg.resize((220, 202))
+        self.soldProductsResizeImg = ImageTk.PhotoImage(self.soldProductsResizeImg)
+        self.soldProducts = tk.Label(contentFrameFour, image=self.soldProductsResizeImg, bg='#f58217')
+        self.soldProducts.place(x=0, y=0)
+        tk.Label(contentFrameFour, text = self.homeController.get_sum_soldproduct(), font =("Helvetica", 40, 'bold'), bg = '#f58217', fg='#ffffff').place(x = 270, y = 80)         
         
     # Brand content
     def displayBrand(self, contentFrame):
@@ -154,7 +160,8 @@ class HomeView(tk.Tk, View):
         
         # Manual Motorcycle Box
         def directToManual(e):
-            pass
+            self.displayManageProductsByCategory(contentFrame, "manual")
+
         self.manualImg = Image.open("./img/manual.png")
         self.manualResizeImg = self.manualImg.resize((200, 200))
         self.manualResizeImg = ImageTk.PhotoImage(self.manualResizeImg)
@@ -164,7 +171,7 @@ class HomeView(tk.Tk, View):
         
         # Scooter Box
         def directToScooter(e):
-            pass
+            self.displayManageProductsByCategory(contentFrame, "scooter")
         self.scooterImg = Image.open("./img/scooter.png")
         self.scooterImg = self.scooterImg.resize((200, 200))
         self.scooterImg = ImageTk.PhotoImage(self.scooterImg)
@@ -174,13 +181,13 @@ class HomeView(tk.Tk, View):
         
         # Sport Box
         def directToSport(e):
-            pass
+            self.displayManageProductsByCategory(contentFrame, "sport")
         self.sportImg = Image.open("./img/sport.png")
         self.sportImg = self.sportImg.resize((200, 200))
         self.sportImg = ImageTk.PhotoImage(self.sportImg)
         self.sport = tk.Label(contentFrame, image=self.sportImg, bg='#ffffff', cursor='hand2')
         self.sport.place(x=380, y=390)
-        self.sport.bind('<Button-1>', directToSport)       
+        self.sport.bind('<Button-1>', directToSport)     
         
     def displayAddProduct(self, contentFrame):
         self.clearFrame(contentFrame)
@@ -298,36 +305,136 @@ class HomeView(tk.Tk, View):
         productFrame.place(x=20, y=160, width=970, height=440)
 
         searchBar = ttk.Entry(contentFrame, font = ('Helvetica', 10))
-        searchBar.place(x=680, y=125, width=235, height=25)
+        searchBar.place(x=780, y=125, width=210, height=25)
 
-        searchBtn = HoverButton(contentFrame, text = "Search", font =('Helvetica',10, 'bold'), bg = "#238636", fg = "#ffffff", bd = 0, activebackground = "#238636", activeforeground = "#ffffff", relief = "flat",command = lambda: self.homeController.btnSearch_product(productFrame, searchBar.get()))
-        searchBtn.place(x=915, y=125, width=65, height=25)
+        # searchBtn = HoverButton(contentFrame, text = "Search", font =('Helvetica',10, 'bold'), bg = "#238636", fg = "#ffffff", bd = 0, activebackground = "#238636", activeforeground = "#ffffff", relief = "flat",command = lambda: self.homeController.btnSearch_product(productFrame, searchBar.get()))
+        # searchBtn.place(x=915, y=125, width=65, height=25)
 
-        filterDrop = ttk.Combobox(contentFrame, values=['Brand', 'Category'], font = ('Helvetica', 10), state = "r")
-        filterDrop.set("Filter")
-        filterDrop.place(x=580, y=125, width=90, height=25)
-        def filterDropCallback(event):
-            if filterDrop.get() == 'Brand':
-                new_tree = self.homeController.filterDropCallback(productFrame,'brand')
-            elif filterDrop.get() == 'Category':
-                new_tree = self.homeController.filterDropCallback(productFrame,'category')
-            return new_tree
-        filterDrop.bind("<<ComboboxSelected>>", filterDropCallback)
+        category_name_list = []
+        for i in range(len(self.homeController.category.get_category_list())):
+            category_name_list.append(self.homeController.category.get_category_list()[i][0])
+        
+        categoryDrop = ttk.Combobox(contentFrame, values = category_name_list, font = ('Helvetica', 10), state = "r")
+        categoryDrop.set("Category")
+        categoryDrop.place(x=580, y=125, width=90, height=25)
+        # def filterCategory(e):
+        #     self.tree = self.homeController.filterCategory(productFrame,categoryDrop.get())
+        #     return self.tree
+        # categoryDrop.bind("<<ComboboxSelected>>", filterCategory)        
+        
+        brand_name_list = []
+        for i in range(len(self.homeController.brand.get_brand_list())):
+            brand_name_list.append(self.homeController.brand.get_brand_list()[i][0])
+        brandDrop = ttk.Combobox(contentFrame, values=brand_name_list, font = ('Helvetica', 10), state = "r")
+        brandDrop.set("Filter")
+        brandDrop.place(x=680, y=125, width=90, height=25)
 
-        sortDrop = ttk.Combobox(contentFrame,values=['Name', 'Price'] , font = ('Helvetica', 10), state = "r")
+        # def filterBrand(e):
+        #     self.tree = self.homeController.filterBrand(productFrame,brandDrop.get())
+        #     return self.tree
+        # brandDrop.bind("<<ComboboxSelected>>", filterBrand)
+        
+        # def filterDropCallback(event):
+        #     if filterDrop.get() == 'Brand':
+        #         new_tree = self.homeController.filterDropCallback(productFrame,'brand')
+        #     elif filterDrop.get() == 'Category':
+        #         new_tree = self.homeController.filterDropCallback(productFrame,'category')
+        #     return new_tree
+        # filterDrop.bind("<<ComboboxSelected>>", filterDropCallback)
+
+        sortDrop = ttk.Combobox(contentFrame,values=['Name', 'Selling_Price_M'] , font = ('Helvetica', 10), state = "r")
         sortDrop.set("Sort")
         sortDrop.place(x=480, y=125, width=90, height=25)
-        def sortDropCallback(event):
-            if sortDrop.get() == 'Name':
-                print("5")
-                new_tree = self.homeController.sortDropCallback(productFrame,'Name')
-            elif sortDrop.get() == 'Price':
-                new_tree = self.homeController.sortDropCallback(productFrame,'Selling_Price_M')
-                return new_tree
-        sortDrop.bind("<<ComboboxSelected>>", sortDropCallback)
+        # def sortDropCallback(event):
+        #     if sortDrop.get() == 'Name':
+        #         print("5")
+        #         new_tree = self.homeController.sortDropCallback(productFrame,'Name')
+        #     elif sortDrop.get() == 'Price':
+        #         new_tree = self.homeController.sortDropCallback(productFrame,'Selling_Price_M')
+        #         return new_tree
+        # sortDrop.bind("<<ComboboxSelected>>", sortDropCallback)
 
         # Treeview
-        self.tree = self.homeController.showTreeView_ProductList(productFrame)
+        self.tree = self.homeController.showTreeView_ProductList(productFrame, searchBar.get(), sortDrop.get(), categoryDrop.get(), brandDrop.get())
+        def searchByContent(e):
+            self.tree = self.homeController.showTreeView_ProductList(productFrame, searchBar.get(), sortDrop.get(), categoryDrop.get(), brandDrop.get())
+            return self.tree
+        searchBar.bind('<KeyRelease>', searchByContent)
+        
+        sortDrop.bind("<<ComboboxSelected>>", searchByContent)
+        brandDrop.bind("<<ComboboxSelected>>", searchByContent)
+        categoryDrop.bind("<<ComboboxSelected>>", searchByContent)
+
+    def displayManageProductsByCategory(self, contentFrame, category):
+        try:
+            self.tree.destroy()
+        except:
+            pass
+        self.clearFrame(contentFrame)   
+        tk.Label(contentFrame, text="Manage products",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
+
+        productFrame = tk.Frame(contentFrame, bg = "#cccccc")
+        productFrame.place(x=20, y=160, width=970, height=440)
+
+        searchBar = ttk.Entry(contentFrame, font = ('Helvetica', 10))
+        searchBar.place(x=780, y=125, width=210, height=25)
+
+        # searchBtn = HoverButton(contentFrame, text = "Search", font = ('Helvetica',10, 'bold'), bg = "#238636", fg = "#ffffff", bd = 0, activebackground = "#238636", activeforeground = "#ffffff", relief = "flat",command = lambda: self.homeController.btnSearch_product(productFrame, searchBar.get()))
+        # searchBtn.place(x=915, y=125, width=65, height=25)
+
+        category_name_list = []
+        for i in range(len(self.homeController.category.get_category_list())):
+            category_name_list.append(self.homeController.category.get_category_list()[i][0])
+        
+        categoryDrop = ttk.Combobox(contentFrame, values = category_name_list, font = ('Helvetica', 10), state = "r")
+        categoryDrop.set(category)
+        categoryDrop.place(x=580, y=125, width=90, height=25)
+        # def filterCategory(e):
+        #     self.tree = self.homeController.filterCategory(productFrame,categoryDrop.get())
+        #     return self.tree
+        # categoryDrop.bind("<<ComboboxSelected>>", filterCategory)        
+        
+        brand_name_list = []
+        for i in range(len(self.homeController.brand.get_brand_list())):
+            brand_name_list.append(self.homeController.brand.get_brand_list()[i][0])
+        brandDrop = ttk.Combobox(contentFrame, values=brand_name_list, font = ('Helvetica', 10), state = "r")
+        brandDrop.set("Filter")
+        brandDrop.place(x=680, y=125, width=90, height=25)
+        # def filterBrand(e):
+        #     self.tree = self.homeController.filterBrand(productFrame,brandDrop.get())
+        #     return self.tree
+        # brandDrop.bind("<<ComboboxSelected>>", filterBrand)
+        
+        # def filterDropCallback(event):
+        #     if filterDrop.get() == 'Brand':
+        #         new_tree = self.homeController.filterDropCallback(productFrame,'brand')
+        #     elif filterDrop.get() == 'Category':
+        #         new_tree = self.homeController.filterDropCallback(productFrame,'category')
+        #     return new_tree
+        # filterDrop.bind("<<ComboboxSelected>>", filterDropCallback)
+
+        sortDrop = ttk.Combobox(contentFrame,values=['Name', 'Selling_Price_M'] , font = ('Helvetica', 10), state = "r")
+        sortDrop.set("Sort")
+        sortDrop.place(x=480, y=125, width=90, height=25)
+        # def sortDropCallback(event):
+        #     if sortDrop.get() == 'Name':
+        #         print("5")
+        #         new_tree = self.homeController.sortDropCallback(productFrame,'Name')
+        #     elif sortDrop.get() == 'Price':
+        #         new_tree = self.homeController.sortDropCallback(productFrame,'Selling_Price_M')
+        #         return new_tree
+        # sortDrop.bind("<<ComboboxSelected>>", sortDropCallback)
+
+        # Treeview
+        self.tree = self.homeController.showTreeView_ProductList(productFrame, searchBar.get(), sortDrop.get(), categoryDrop.get(), brandDrop.get())
+        def searchByContent(e):
+            self.tree = self.homeController.showTreeView_ProductList(productFrame, searchBar.get(), sortDrop.get(), categoryDrop.get(), brandDrop.get())
+            return self.tree
+        searchBar.bind('<KeyRelease>', searchByContent)
+        
+        sortDrop.bind("<<ComboboxSelected>>", searchByContent)
+        brandDrop.bind("<<ComboboxSelected>>", searchByContent)
+        categoryDrop.bind("<<ComboboxSelected>>", searchByContent)
         
     def displayNewOrder(self, contentFrame):   
         self.clearFrame(contentFrame)

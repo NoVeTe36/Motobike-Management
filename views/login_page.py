@@ -77,6 +77,7 @@ class LoginPage(tk.Frame):
         self.button_signup.place(relx=0.511, rely=0.8, anchor="center")       
         self.button_signup.bind("<Button-1>", lambda event: self.move_out(event, self.window, 5))
         self.button_forgot_password.bind("<Button-1>", lambda event: self.move_out_fg(event, self.window, 5))
+        self.window.bind("<Return>", lambda event: self.login())
 
         # default state is hidden
         image = '../img/close_eye.png'

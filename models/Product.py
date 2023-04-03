@@ -149,6 +149,27 @@ class Product:
         self.db.commit()
         response = self.cursor.rowcount
 
+        # after update, check if the brand and category are changed
+        if fields[1] != fields_old[1]:
+            # update brand quantity
+            brand_sql = "UPDATE Brand SET quantity = quantity - 1 WHERE (Name = %s)"
+            self.cursor.execute(brand_sql, (fields_old[1],))
+            self.db.commit()
+
+            brand_sql = "UPDATE Brand SET quantity = quantity + 1 WHERE (Name = %s)"
+            self.cursor.execute(brand_sql, (fields[1],))
+            self.db.commit()
+
+        if fields[2] != fields_old[2]:
+            # update category quantity
+            category_sql = "UPDATE Category SET quantity = quantity - 1 WHERE (Name = %s)"
+            self.cursor.execute(category_sql, (fields_old[2],))
+            self.db.commit()
+
+            category_sql = "UPDATE Category SET quantity = quantity + 1 WHERE (Name = %s)"
+            self.cursor.execute(category_sql, (fields[2],))
+            self.db.commit()
+
         return response
     
     def sort(self, index):
@@ -164,17 +185,25 @@ class Product:
         return result
     
     def filterBrand(self, name):
-        query = "SELECT name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity FROM product WHERE Brand = '%s';"
+        query = "SELECT name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity FROM product WHERE Brand = %s;"
         self.cursor.execute(query, (name,))
         result = self.cursor.fetchall()
         self.db.commit()
         return result
     
     def filterCategory(self, name):
-        query = "SELECT name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity FROM product WHERE Category = '%s';"
+        query = "SELECT name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity FROM product WHERE Category = %s;"
         self.cursor.execute(query, (name,))
         result = self.cursor.fetchall()
         self.db.commit()
+        return result
+    
+    # pass the name of the column and the type of sort
+    def sortType(self, index, type):
+        query = "select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product order by " + index + " " + type + ";"
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        print(result)
         return result
 
 

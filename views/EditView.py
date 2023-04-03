@@ -173,4 +173,4 @@ class EditView(tk.Tk, View):
     def main(self):
         self.mainloop()
     def close(self):
-        return    
+        return
