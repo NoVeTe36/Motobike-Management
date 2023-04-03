@@ -4,6 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os, time
 from views.View import View
+from db.settingup import SettingUp
 
 class HoverButton(tk.Button):
     def __init__(self, master, **kw):
@@ -19,7 +20,7 @@ class HoverButton(tk.Button):
 
 class HomeView(tk.Tk, View):
     def __init__(self,controller, root):
-        #super().__init__()
+        SettingUp()
         self.window = root
         self.homeController = controller
         self.window.geometry("1280x720+100+50")
@@ -100,43 +101,36 @@ class HomeView(tk.Tk, View):
         self.clearFrame(contentFrame)    
         tk.Label(contentFrame, text="Dashboard",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
         
-        contentFrameOne = tk.Frame(contentFrame, width=220, height=220, bg='#cccccc')
-        contentFrameOne.place(x=180, y=140)
-        
-        self.totalProductImg = Image.open("./img/Total_products.png")
-        self.totalProductResizeImg = self.totalProductImg.resize((220, 220))
-        self.totalProductResizeImg = ImageTk.PhotoImage(self.totalProductResizeImg)
-        self.totalProduct = tk.Label(contentFrameOne, image=self.totalProductResizeImg, bg='#cc0000')
-        self.totalProduct.place(x=0, y=0)
-        tk.Label(contentFrameOne, text = self.homeController.get_sum_product(), font =("Helvetica", 15, 'bold'), bg = '#cc0000').place(x = 150, y = 50)
-        
-        contentFrameTwo = tk.Frame(contentFrame, width=220, height=220, bg='#cccccc')
-        contentFrameTwo.place(x=580, y=140)
-        self.revenueImg = Image.open("./img/Revenue.png")
-        self.revenueResizeImg = self.revenueImg.resize((220, 220))
-        self.revenueResizeImg = ImageTk.PhotoImage(self.revenueResizeImg)
-        self.revenue = tk.Label(contentFrameTwo, image=self.revenueResizeImg, bg='#ffffff')
-        self.revenue.place(x=0, y=0)
-        tk.Label(contentFrameTwo, text = self.homeController.get_profit(), font =("Helvetica", 15, 'bold'), bg = '#fff').place(x = 150, y = 50)
-        
-        contentFrameThree = tk.Frame(contentFrame, width=220, height=220, bg='#cccccc')
-        contentFrameThree.place(x=180, y=390)
-        self.brandsImg = Image.open("./img/Brands.png")
-        self.brandsResizeImg = self.brandsImg.resize((220, 220))
-        self.brandsResizeImg = ImageTk.PhotoImage(self.brandsResizeImg)
-        self.brands = tk.Label(contentFrameThree, image=self.brandsResizeImg, bg='#ffffff')
-        self.brands.place(x=0, y=0)
-        tk.Label(contentFrameThree, text = self.homeController.get_sum_brand(), font =("Helvetica", 15, 'bold'), bg = '#fff').place(x = 150, y = 50)
-        
-        contentFrameFour = tk.Frame(contentFrame, width=220, height=220, bg='#cccccc')
-        contentFrameFour.place(x=580, y=390)
-        self.soldProductsImg = Image.open("./img/Sold_products.png")
-        self.soldProductsResizeImg = self.soldProductsImg.resize((220, 220))
-        self.soldProductsResizeImg = ImageTk.PhotoImage(self.soldProductsResizeImg)
-        self.soldProducts = tk.Label(contentFrameFour, image=self.soldProductsResizeImg, bg='#ffffff')
-        self.soldProducts.place(x=0, y=0)
-        tk.Label(contentFrameFour, text = self.homeController.get_sum_soldproduct(), font =("Helvetica", 15, 'bold'), bg = '#fff').place(x = 150, y = 50)
-     
+        # Create 4 frames to hold 4 gifs
+        frame1 = tk.Frame(contentFrame, width=440, height=202, bg='#cb2027')
+        frame1.place(x=60, y=170)
+        frame2 = tk.Frame(contentFrame, width=440, height=202, bg='#179648')
+        frame2.place(x=515, y=170)
+        frame3 = tk.Frame(contentFrame, width=440, height=202, bg='#263981')
+        frame3.place(x=60, y=400)
+        frame4 = tk.Frame(contentFrame, width=440, height=202, bg='#f58217')
+        frame4.place(x=515, y=400)   
+         
+        # productGift = "../img/product.gif"
+        # frameCnt = 12
+        # file_path = os.path.join(os.path.dirname(__file__), productGift)
+        # print(file_path)
+        # frames1 = [tk.PhotoImage(file=file_path, format=f"gif -index {i}") for i in range(frameCnt)]
+        # for i in range(frameCnt):
+        #     frames1[i] = frames1[i].subsample(3, 3)
+        # def update(ind):
+        #     frame1 = frames1[ind]
+        #     ind += 1
+        #     if ind == frameCnt:
+        #         ind = 0
+        #     try:
+        #         self.label.configure(image=frame1)
+        #     except:
+        #         return
+        #     self.contentFrame.after(100, update, ind)
+        # self.label1 = tk.Label(frame1, bg = "#cc0000")
+        # self.label1.place(x = -200, y = -40)
+        # self.contentFrame.after(0, update, 0)    
         
     # Brand content
     def displayBrand(self, contentFrame):

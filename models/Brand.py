@@ -1,4 +1,5 @@
 import mysql.connector
+from db.settingup import SettingUp
 
 """
     This class is used to create a brand object
@@ -13,18 +14,8 @@ class Brand:
             database="motorbikemanagement",
             charset="utf8"
         )
-        try:
-            self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS Brand (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `name` VARCHAR(255),
-                `quantity` INT DEFAULT 0,
-                INDEX brand_idx(name)
-            );
-            """)
-        except:
-            pass
         self.cursor = self.db.cursor()
+        SettingUp()
 
     def add(self, name):
         response = 0

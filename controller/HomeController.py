@@ -99,10 +99,13 @@ class HomeController(Controller):
             for i in range(len(fields)):
                 product.append(fields[i].get())
             self.product.add(fields)
+            pass
         if response == -1:
             messagebox.showerror("Add brand", "Product already exists!")
+            pass
         else: 
             messagebox.showerror("Add brand", "Some fields are empty or wrong type!")
+            pass
         for i in range(len(fields)):
             fields[i].delete = (0, 'end')
 
@@ -150,6 +153,8 @@ class HomeController(Controller):
         for i in range(0, len(product_list)):
             tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5], product_list[i][6], product_list[i][7], product_list[i][8], product_list[i][9], product_list[i][10], product_list[i][11], product_list[i][12], product_list[i][13]))
             tree.bind("<Double-1>", self.on_select)
+            tree.bind("<Delete>", self.on_delete)
+
         # Scrollbar
         scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
         scrollBarY.place(x=950, y=0, height=440, width = 20)
@@ -201,13 +206,17 @@ class HomeController(Controller):
         edit_view = self.loadView("edit",tk.Tk())
         edit_view.showEditView(values)
 
-    def on_delete(self, event):
-        selected_item = event.widget.selection()[0]
-        values = event.widget.item(selected_item)['values']
-        self.product.delete_product(values[0])
-        self.showTreeView_ProductList(self.contentFrame)
+    def on_delete(self, event):    
+        selected_items = event.widget.selection()    
+        confirm = messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete the selected item(s)?")
+        if confirm:        
+            for item in selected_items:            
+                item_values = event.widget.item(item, "values")            
+                print(item_values[0])
+                self.product.delete_product(item_values[0])            
+                event.widget.delete(item)
 
-#Filter display
+    #Filter display
     def filterDropCallback(self,contentFrame,filterDrop):
         style = ttk.Style()
         style.configure("Treeview", rowheight=25)
@@ -355,7 +364,16 @@ class HomeController(Controller):
         scrollBarX = ttk.Scrollbar(contentFrame, orient="horizontal", command=tree.xview)
         scrollBarX.place(x=0, y=420, height=20, width = 970)
         tree.configure(xscrollcommand=scrollBarX.set)
-        return tree        
+        return tree     
+
+    def btnUpdate_Product(self, fields):
+        # use update_product function from product class
+        self.product.update_product(fields)
+        if self.product.update_product(fields) != 0:
+            messagebox.showinfo("Success", "Product updated successfully")
+        else:
+            messagebox.showerror("Error", "Product update failed")
+
     """
         @Override
     """

@@ -1,4 +1,5 @@
 import mysql.connector
+from db.settingup import SettingUp
 
 """
     This class is used to create a category object
@@ -13,18 +14,8 @@ class Category:
             database="motorbikemanagement",
             charset="utf8"
         )
-        try:
-            self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS Category(
-                `id` int AUTO_INCREMENT PRIMARY KEY,
-                `name` VARCHAR(255) CHARACTER SET utf8,
-                `quantity` INT DEFAULT 0,
-                INDEX cate_idx(name)
-            );
-            """)
-        except:
-            pass
         self.cursor = self.db.cursor()
+        SettingUp()
 
     def add(self, name):
         response = 0

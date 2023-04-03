@@ -7,6 +7,7 @@ class EditView(tk.Tk, View):
     def __init__(self,controller, root):
         #Main
         self.window = root
+        self.homeController = controller
         self.window.geometry("880x480")
         self.window.configure(bg = "#cccccc")
         self.window.resizable(False, False)
@@ -115,8 +116,8 @@ class EditView(tk.Tk, View):
         self.quantityInput.place(x=230,y=380)
         Field.append(self.quantityInput)
 
-        addBtn = HoverButton(self.window,text='Update',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command = lambda: None)
-        addBtn.place(x=670, y = 420)
+        updateBtn = HoverButton(self.window,text='Update',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command = lambda: self.homeController.btnUpdate_Product(Field))
+        updateBtn.place(x=670, y = 420)
 
         clearBtn = HoverButton(self.window,text='Clear',bg='#cc0000', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#cc0000', activeforeground='#fff', relief='flat', command = lambda: self.clear())
         clearBtn.place(x=770,y=420)  
@@ -154,7 +155,9 @@ class EditView(tk.Tk, View):
         self.colorInput.insert(0, values[11])
         self.sellingPriceInput.insert(0, values[12])
         self.quantityInput.insert(0, values[13])
+
     def main(self):
         self.mainloop()
+
     def close(self):
         return    
