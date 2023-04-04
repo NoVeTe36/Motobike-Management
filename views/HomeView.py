@@ -438,6 +438,7 @@ class HomeView(tk.Tk, View):
         
     def displayNewOrder(self, contentFrame):   
         self.clearFrame(contentFrame)
+        Field = []
         tk.Label(contentFrame, text="New order",font=('Helvetica', 25, 'bold'), bg='#fff').place(x=60, y=60)
         
         customerInformationFrame = tk.Frame(contentFrame, height=180, width=890, bg='#cccccc')
@@ -447,14 +448,20 @@ class HomeView(tk.Tk, View):
         tk.Label(customerInformationFrame, text="Name:",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=40, y=60)
         customerNameInput = ttk.Entry(customerInformationFrame, width=22, font=('Helvetica', 14))
         customerNameInput.place(x=150,y=60)
-        
+        Field.append(customerNameInput)
+
         tk.Label(customerInformationFrame, text="Phone:",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=40, y=120)
         phoneInput = ttk.Entry(customerInformationFrame, width=22, font=('Helvetica', 14))
         phoneInput.place(x=150,y=120)
-        
+        Field.append(phoneInput)
+
         modelInformationFrame = tk.Frame(contentFrame, height=290, width=890, bg='#cccccc')
         modelInformationFrame.place(x=60, y=330)
         tk.Label(modelInformationFrame, text="Product bought:",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=10, y=10)
+
+        tempFrame = tk.Frame(contentFrame, height=80, width=400, bg='#cccccc')
+        tempFrame.place(x=500, y=200)
+        tk.Label(tempFrame, text="Product:",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=0,y=0)
 
         def clearContent():
             customerNameInput.delete(0, tk.END)
@@ -462,11 +469,13 @@ class HomeView(tk.Tk, View):
 
         def getContent():
             pass
+        
+        self.tree = self.homeController.showTreeView_OrderProductList(contentFrame, tempFrame)
 
         clearBtn = HoverButton(modelInformationFrame,text='Clear',bg='#cc0000', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#cc0000', activeforeground='#fff', relief='flat', command=clearContent)
         clearBtn.place(x=690, y=250)
 
-        addBtn = HoverButton(modelInformationFrame,text='Add',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command=getContent)
+        addBtn = HoverButton(modelInformationFrame,text='Add',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command=lambda: self.homeController.btnAdd_Order(Field, tempFrame))
         addBtn.place(x=790,y=250)
         
     def displayManageOrders(self, contentFrame):
@@ -475,6 +484,10 @@ class HomeView(tk.Tk, View):
 
         orderFrame = tk.Frame(contentFrame, bg = "#cccccc")
         orderFrame.place(x=20, y=160, width=970, height=440) 
+
+        # Treeview
+        self.tree = self.homeController.showTreeView_OrderList(orderFrame)
+        
     def main(self):
         self.mainloop()
     def close(self):

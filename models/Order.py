@@ -14,7 +14,24 @@ class Order:
         SettingUp()
 
     def add(self, fields):
-        sql = "insert into product (Date, Customer_Name, Customer_Phone, Model, Brand, Category, ) values (%s, %s, %s, %s, %s, %s, %s, %s)"
-        self.cursor.execute(sql, (fields[0].get(), fields[1].get(), fields[2].get(), fields[3].get(), fields[4].get(), fields[5].get(), fields[6].get(), fields[7].get(),))
-        self.cursor.fetchall()
+        sql = "insert into orders (Date, Customer_Name, Customer_Phone, Model, Brand, Category, Color, price) values (%s, %s, %s, %s, %s, %s, %s, %s)"
+        self.cursor.execute(sql, (fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6], fields[7],))
         self.db.commit()
+
+    def get_product_list(self):
+        self.cursor.execute("select name, brand, category, color, Selling_Price_M, quanity from product")
+        result = self.cursor.fetchall()
+        return result
+    
+    def check_add_order(self,fields):
+        for i in range(len(fields)):
+            if fields[i].get() == "":
+                return 0
+        if fields[1].get().isdigit() == False:
+            return 0
+        return 1
+    
+    def get_order_list(self):
+        self.cursor.execute("select Date, Customer_Name, Customer_Phone, Model, Brand, Category, Color, quantity, price from orders")
+        result = self.cursor.fetchall()
+        return result

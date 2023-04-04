@@ -79,3 +79,21 @@ class SettingUp:
 
         except:
             pass
+
+        try:
+            """
+            CREATE TABLE IF NOT EXISTS orders (
+                ID INT primary key auto_increment,
+                Date DATETIME,
+                Customer_Name VARCHAR(255) CHARACTER SET utf8,
+                Customer_Phone VARCHAR(255) CHARACTER SET utf8,
+                Model VARCHAR(255) CHARACTER SET utf8,
+                Brand VARCHAR(255) CHARACTER SET utf8,
+                Category VARCHAR(255) CHARACTER SET utf8,
+                Color VARCHAR(255) CHARACTER SET utf8,
+                Quantity INT DEFAULT 1,
+                price NUMERIC(18, 3)
+            );
+            """
+        except:
+            pass

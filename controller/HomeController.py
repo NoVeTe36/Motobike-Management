@@ -7,6 +7,8 @@ from models.Category import Category
 import tkinter as tk
 from tkinter import ttk
 from views.EditView import EditView as EditView
+from models.Order import Order
+import time
 
 """
     Main controller. It will be responsible for program's main screen behavior.
@@ -26,6 +28,7 @@ class HomeController(Controller):
     product = Product()
     brand = Brand()
     category = Category()
+    order = Order()
 #DASHBOARD
 
     def get_sum_product(self):
@@ -62,12 +65,12 @@ class HomeController(Controller):
         style.configure("Treeview", rowheight=25)
         tree = ttk.Treeview(contentFrame, height=11)
         tree["columns"] = ("brand", "quantity")
-        tree.column("#0", width=150, stretch=False)
-        tree.column("brand", width=600, stretch=False)
-        tree.column("quantity", width=140, stretch=False)
-        tree.heading("#0", text="No.")
-        tree.heading("brand", text="Brand")
-        tree.heading("quantity", text="Quantity")
+        tree.column("#0", width=150, stretch=False, anchor="center")
+        tree.column("brand", width=600, stretch=False, anchor="center")
+        tree.column("quantity", width=140, stretch=False, anchor="center")
+        tree.heading("#0", text="No.", anchor="center")
+        tree.heading("brand", text="Brand", anchor="center")
+        tree.heading("quantity", text="Quantity", anchor="center")
         tree.place(x= 20, y = 160, width = 970, height = 440)
         for i in range(len(brand_list)):
             tree.insert('', 'end', text=i+1, values=(brand_list[i][0], brand_list[i][1]))
@@ -119,36 +122,36 @@ class HomeController(Controller):
         style.configure("Treeview", rowheight=25)
         tree = ttk.Treeview(contentFrame, height=11)
         tree["columns"] = ("Name", "brand", "category", "length_mm", "width_mm", "height_mm", "mass_kg", "fuel_capacity", "fuel_consumption_100km", "engine_type", "Maximize_Efficiency_kW_minute", "color", "Selling_Price_M", "quantity" )
-        tree.column("#0", width=50, stretch=False)
-        tree.column("Name", width=250, stretch=False)
-        tree.column("brand", width=100, stretch=False)
-        tree.column("category", width=100, stretch=False)
-        tree.column("length_mm", width=100, stretch=False)
-        tree.column("width_mm", width=100, stretch=False)
-        tree.column("height_mm", width=100, stretch=False)
-        tree.column("mass_kg", width=100, stretch=False)
-        tree.column("fuel_capacity", width=200, stretch=False)
-        tree.column("fuel_consumption_100km", width=200, stretch=False)
-        tree.column("engine_type", width=140, stretch=False)
-        tree.column("Maximize_Efficiency_kW_minute", width=140, stretch=False)
-        tree.column("color", width=140, stretch=False)
-        tree.column("Selling_Price_M", width=140, stretch=False)
+        tree.column("#0", width=50, stretch=False, anchor="center")
+        tree.column("Name", width=250, stretch=False, anchor="center")
+        tree.column("brand", width=100, stretch=False, anchor="center")
+        tree.column("category", width=100, stretch=False, anchor="center")
+        tree.column("length_mm", width=100, stretch=False, anchor="center")
+        tree.column("width_mm", width=100, stretch=False, anchor="center")
+        tree.column("height_mm", width=100, stretch=False, anchor="center")
+        tree.column("mass_kg", width=100, stretch=False, anchor="center")
+        tree.column("fuel_capacity", width=200, stretch=False, anchor="center")
+        tree.column("fuel_consumption_100km", width=200, stretch=False, anchor="center")
+        tree.column("engine_type", width=140, stretch=False, anchor="center")
+        tree.column("Maximize_Efficiency_kW_minute", width=140, stretch=False, anchor="center")
+        tree.column("color", width=140, stretch=False, anchor="center")
+        tree.column("Selling_Price_M", width=140, stretch=False, anchor="center")
         tree.column("quantity", width=0, stretch=False)
-        tree.heading("#0", text="No.")
-        tree.heading("Name", text="Name")
-        tree.heading("brand", text="Brand")
-        tree.heading("category", text="Category")
-        tree.heading("length_mm", text="Length (mm)")
-        tree.heading("width_mm", text="Width (mm)")
-        tree.heading("height_mm", text="Height (mm)")
-        tree.heading("mass_kg", text="Mass (kg)")
-        tree.heading("fuel_capacity", text="Fuel Capacity (L)")
-        tree.heading("fuel_consumption_100km", text="Fuel Consumption (100km)")
-        tree.heading("engine_type", text="Engine Type")
-        tree.heading("Maximize_Efficiency_kW_minute", text="Maximize Efficiency (kW/minute)")
-        tree.heading("color", text="Color")
-        tree.heading("Selling_Price_M", text="Selling Price (M)")
-        tree.heading("quantity", text="Quantity")
+        tree.heading("#0", text="No.", anchor="center")
+        tree.heading("Name", text="Name", anchor="center")
+        tree.heading("brand", text="Brand", anchor="center")
+        tree.heading("category", text="Category", anchor="center")
+        tree.heading("length_mm", text="Length (mm)", anchor="center")
+        tree.heading("width_mm", text="Width (mm)", anchor="center")
+        tree.heading("height_mm", text="Height (mm)", anchor="center")
+        tree.heading("mass_kg", text="Mass (kg)", anchor="center")
+        tree.heading("fuel_capacity", text="Fuel Capacity (L)", anchor="center")
+        tree.heading("fuel_consumption_100km", text="Fuel Consumption (100km)", anchor="center")
+        tree.heading("engine_type", text="Engine Type", anchor="center")
+        tree.heading("Maximize_Efficiency_kW_minute", text="Maximize Efficiency (kW/minute)", anchor="center")
+        tree.heading("color", text="Color", anchor="center")
+        tree.heading("Selling_Price_M", text="Selling Price (M)", anchor="center")
+        tree.heading("quantity", text="Quantity", anchor="center")
         tree.place(x= 0, y = 0, width = 1000, height = 500)
         product_list = self.product.get_product_list()
         for i in range(0, len(product_list)):
@@ -169,36 +172,95 @@ class HomeController(Controller):
         tree.destroy()
         tree = self.showTreeView_ProductList(contentFrame, product_list)  
 
-    def showTreeView_OrderList(self, frame):
+    # TREEVIEW IN ORDER PAGE
+
+    def showTreeView_OrderProductList(self, contentFrame, temp_frame):
         style = ttk.Style()
         style.configure("Treeview", rowheight=25)
-        tree = ttk.Treeview(frame, height=10)
-        tree["columns"] = ("order_id", "customer_id", "product_id", "quantity", "order_date", "delivery_date", "status")
-        tree.column("#0", width=50, stretch=False)
-        tree.column("order_id", width=0, stretch=False)
-        tree.column("customer_id", width=0, stretch=False)
-        tree.column("product_id", width=0, stretch=False)
-        tree.column("quantity", width=0, stretch=False)
-        tree.column("order_date", width=0, stretch=False)
-        tree.column("delivery_date", width=0, stretch=False)
-        tree.column("status", width=0, stretch=False)
-        tree.heading("#0", text="No.")
-        tree.heading("order_id", text="Order ID")
-        tree.heading("customer_id", text="Customer ID")
-        tree.heading("product_id", text="Product ID")
-        tree.heading("quantity", text="Quantity")
-        tree.heading("order_date", text="Order Date")
-        tree.heading("delivery_date", text="Delivery Date")
-        tree.heading("status", text="Status")
-        tree.place(x= 0, y = 0, width = 1000, height = 500)
+        tree = ttk.Treeview(contentFrame, height=11)
+        tree["columns"] = ("product", "brand", "category", "color", "quantity", "Selling_Price_M")
+        tree.column("#0", width=50, stretch=False, anchor="center")
+        tree.column("product", width=200, stretch=False, anchor="center")
+        tree.column("brand", width=100, stretch=False, anchor="center")
+        tree.column("category", width=100, stretch=False, anchor="center")
+        tree.column("color", width=130, stretch=False, anchor="center")
+        tree.column("quantity", width=100, stretch=False, anchor="center")
+        tree.column("Selling_Price_M", width=100, stretch=False, anchor="center")
+        tree.heading("#0", text="No.", anchor="center")
+        tree.heading("product", text="Product", anchor="center")
+        tree.heading("brand", text="Brand", anchor="center")
+        tree.heading("category", text="Category", anchor="center")
+        tree.heading("color", text="Color", anchor="center")
+        tree.heading("quantity", text="Quantity", anchor="center")
+        tree.heading("Selling_Price_M", text="Selling Price (M)", anchor="center")
+        tree.place(x= 110, y = 380, width = 800, height = 180)
+        product_list = self.order.get_product_list()
+        for i in range(len(product_list)):
+            tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5]))
+        
+        # Bind the TreeviewSelect event to the on_tree_select method
+        list = None
+        tree.bind("<<TreeviewSelect>>", lambda event: self.on_tree_select(event, tree, temp_frame))
+
         # Scrollbar
-        scrollBarY = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
-        scrollBarY.place(x=950, y=0, height=440, width = 20)
+        scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
+        scrollBarY.place(x=890, y=380, height=180, width = 20)
         tree.configure(yscrollcommand=scrollBarY.set)
-        scrollBarX = ttk.Scrollbar(frame, orient="horizontal", command=tree.xview)
-        scrollBarX.place(x=0, y=450, height=20, width = 970)
-        tree.configure(xscrollcommand=scrollBarX.set)
+        # Return the selected values variable instead of the tree object
         return tree
+
+    def on_tree_select(self, event, tree, temp_frame):
+        # Get the id of the selected row
+        item = event.widget.selection()[0]
+        # Get the values of the selected row
+        values = tree.item(item, "values")
+        # Store the values in a class variable
+        self.order_list_box(temp_frame, values)
+        
+    def order_list_box(self, temp_frame, values):
+        productInput = ttk.Entry(temp_frame, width=50, font=('Helvetica', 14))
+        productInput.place(x=100,y=0)
+        productInput.insert(0, values[0])
+        return productInput
+    
+    def btnAdd_Order(self, fields, temp_frame):
+        order_list = []
+        has_entry = False
+        for child in temp_frame.winfo_children():
+            if isinstance(child, ttk.Entry):
+                has_entry = True
+                break
+        if has_entry:
+            # Bind order_list to entry.get() & delete entry
+            for child in temp_frame.winfo_children():
+                if isinstance(child, ttk.Entry):
+                    order_list.append(child.get())
+                    child.destroy()
+        
+        if len(order_list) > 0:
+            total_product_list = self.order.get_product_list()
+            for i in range(len(total_product_list)):
+                if total_product_list[i][0] == order_list[0]:
+                    order_list.clear()
+                    for j in range(len(total_product_list[i])):
+                        order_list.append(total_product_list[i][j])
+                    break
+        full_order_list = []
+        response = self.order.check_add_order(fields)
+        # tree, order_list = self.showTreeView_OrderProductList(contentFrame)
+        if response > 0 and len(order_list) > 0:
+            messagebox.showinfo("Success", "Add order successfully")
+            for i in range(len(fields)):
+                full_order_list.append(fields[i].get())
+            for i in range(len(order_list)):
+                full_order_list.append(order_list[i])
+            time_order = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            full_order_list.insert(0, time_order)
+            self.order.add(full_order_list)
+        else:
+            messagebox.showinfo("Error", "Add order failed")
+        for i in range(len(fields)):
+            fields[i].delete = (0, 'end')
 
     # #Filter display
     # def filterDropCallback(self,contentFrame,filterDrop):
@@ -364,9 +426,17 @@ class HomeController(Controller):
 
     # Select item, double click to edit
     def on_select(self, event):
-        selected_item = event.widget.selection()[0]
-        values = event.widget.item(selected_item)['values']
-        edit_view = self.loadEdit("edit",tk.Tk(), values)
+        selected_item = None
+        if len(event.widget.selection()) > 0:
+            selected_item = event.widget.selection()[0]
+            
+        # perform some action with the selected item
+        if selected_item is not None:
+            selected_item = event.widget.selection()[0]
+            values = event.widget.item(selected_item)['values']
+            edit_view = self.loadEdit("edit",tk.Tk(), values)
+            # reset selected item
+            event.widget.selection_remove(selected_item)
         # edit_view.showEditView(values)
 
     # Delete item, press delete button to delete
@@ -376,7 +446,6 @@ class HomeController(Controller):
         if confirm:        
             for item in selected_items:            
                 item_values = event.widget.item(item, "values")            
-                print(item_values[0])
                 self.product.delete_product(item_values[0])            
                 event.widget.delete(item)
     def showTreeView_ProductList(self, contentFrame, searchContent, filterContent, categoryContent, brandContent):
@@ -385,36 +454,36 @@ class HomeController(Controller):
         style.configure("Treeview", rowheight=25)
         tree = ttk.Treeview(contentFrame, height=11)
         tree["columns"] = ("Name", "brand", "category", "length_mm", "width_mm", "height_mm", "mass_kg", "fuel_capacity", "fuel_consumption_100km", "engine_type", "Maximize_Efficiency_kW_minute", "color", "Selling_Price_M", "quantity" )
-        tree.column("#0", width=50, stretch=False)
-        tree.column("Name", width=250, stretch=False)
-        tree.column("brand", width=100, stretch=False)
-        tree.column("category", width=100, stretch=False)
-        tree.column("length_mm", width=100, stretch=False)
-        tree.column("width_mm", width=100, stretch=False)
-        tree.column("height_mm", width=100, stretch=False)
-        tree.column("mass_kg", width=100, stretch=False)
-        tree.column("fuel_capacity", width=200, stretch=False)
-        tree.column("fuel_consumption_100km", width=200, stretch=False)
-        tree.column("engine_type", width=140, stretch=False)
-        tree.column("Maximize_Efficiency_kW_minute", width=140, stretch=False)
-        tree.column("color", width=140, stretch=False)
-        tree.column("Selling_Price_M", width=140, stretch=False)
-        tree.column("quantity", width=0, stretch=False)
-        tree.heading("#0", text="No.")
-        tree.heading("Name", text="Name")
-        tree.heading("brand", text="Brand")
-        tree.heading("category", text="Category")
-        tree.heading("length_mm", text="Length (mm)")
-        tree.heading("width_mm", text="Width (mm)")
-        tree.heading("height_mm", text="Height (mm)")
-        tree.heading("mass_kg", text="Mass (kg)")
-        tree.heading("fuel_capacity", text="Fuel Capacity (L)")
-        tree.heading("fuel_consumption_100km", text="Fuel Consumption (100km)")
-        tree.heading("engine_type", text="Engine Type")
-        tree.heading("Maximize_Efficiency_kW_minute", text="Maximize Efficiency (kW/minute)")
-        tree.heading("color", text="Color")
-        tree.heading("Selling_Price_M", text="Selling Price (M)")
-        tree.heading("quantity", text="Quantity")
+        tree.column("#0", width=50, stretch=False, anchor="center")
+        tree.column("Name", width=250, stretch=False, anchor="center")
+        tree.column("brand", width=100, stretch=False, anchor="center")
+        tree.column("category", width=100, stretch=False, anchor="center")
+        tree.column("length_mm", width=100, stretch=False, anchor="center")
+        tree.column("width_mm", width=100, stretch=False, anchor="center")
+        tree.column("height_mm", width=100, stretch=False, anchor="center")
+        tree.column("mass_kg", width=100, stretch=False, anchor="center")
+        tree.column("fuel_capacity", width=200, stretch=False, anchor="center")
+        tree.column("fuel_consumption_100km", width=200, stretch=False, anchor="center")
+        tree.column("engine_type", width=140, stretch=False, anchor="center")
+        tree.column("Maximize_Efficiency_kW_minute", width=140, stretch=False, anchor="center")
+        tree.column("color", width=140, stretch=False, anchor="center")
+        tree.column("Selling_Price_M", width=140, stretch=False, anchor="center")
+        tree.column("quantity", width=0, stretch=False, anchor="center")
+        tree.heading("#0", text="No.", anchor="center")
+        tree.heading("Name", text="Name", anchor="center")
+        tree.heading("brand", text="Brand", anchor="center")
+        tree.heading("category", text="Category", anchor="center")
+        tree.heading("length_mm", text="Length (mm)", anchor="center")
+        tree.heading("width_mm", text="Width (mm)", anchor="center")
+        tree.heading("height_mm", text="Height (mm)", anchor="center")
+        tree.heading("mass_kg", text="Mass (kg)", anchor="center")
+        tree.heading("fuel_capacity", text="Fuel Capacity (L)", anchor="center")
+        tree.heading("fuel_consumption_100km", text="Fuel Consumption (100km)", anchor="center")
+        tree.heading("engine_type", text="Engine Type", anchor="center")
+        tree.heading("Maximize_Efficiency_kW_minute", text="Maximize Efficiency (kW/minute)", anchor="center")
+        tree.heading("color", text="Color", anchor="center")
+        tree.heading("Selling_Price_M", text="Selling Price (M)", anchor="center")
+        tree.heading("quantity", text="Quantity", anchor="center")
         tree.place(x= 0, y = 0, width = 1000, height = 450)
         product_list = self.product.get_product_list()
         # product_list_filter = product_list.copy()
@@ -449,11 +518,12 @@ class HomeController(Controller):
             for i in range(len(displayList)):
                 if searchContent.lower() in displayList[i][0].lower():
                     tree.insert('', 'end', text=i+1, values=(displayList[i][0], displayList[i][1], displayList[i][2], displayList[i][3], displayList[i][4], displayList[i][5], displayList[i][6], displayList[i][7], displayList[i][8], displayList[i][9], displayList[i][10], displayList[i][11], displayList[i][12], displayList[i][13]))
-        
+        self.sort_order = {}
         # set a tag for each header to call the sort function when clicked using for loop
         for col in tree["columns"]:
+            self.sort_order[col] = False
             # if press store the col name in _col then call the sort function
-            tree.heading(col, text=col, command=lambda _col=col: self.treeview_sort_column(tree, _col, True))
+            tree.heading(col, text=col, command=lambda _col=col: self.treeview_sort_column(tree, _col))
 
         tree.bind("<Double-1>", self.on_select)
         tree.bind("<Delete>", self.on_delete)
@@ -469,33 +539,63 @@ class HomeController(Controller):
         return tree
 
     # function treeview_sort_column pass the col to function sortType in class Product
-    def treeview_sort_column(self, tree, col, reverse=False):
-        # Get the current column heading text
-        heading = tree.heading(col, "text")
-        
-        # Toggle the sort order if the same column header was clicked again
-        if heading.startswith('▲ '):
-            heading = heading[2:]
-            reverse = not reverse
-        elif heading.startswith('▼ '):
-            heading = heading[2:]
-            reverse = not reverse
-        
-        # Add arrow symbols to indicate sort order
-        if reverse:
-            tree.heading(col, text=f'▼ {heading}', command=lambda: self.treeview_sort_column(tree, col, not reverse))
+    def treeview_sort_column(self, tree, col):
+        if self.sort_order[col]:
+            reverse = True
+            self.sort_order[col] = False
         else:
-            tree.heading(col, text=f'▲ {heading}', command=lambda: self.treeview_sort_column(tree, col, not reverse))
-        
-        # Get the values to sort
+            reverse = False
+            self.sort_order[col] = True
+        heading = tree.heading(col, "text")
+        heading = heading.replace('▲ ', '').replace('▼ ', '')
+        if reverse:
+            tree.heading(col, text=f'▼ {heading}')
+        if not reverse:
+            tree.heading(col, text=f'▲ {heading}')
+        else:
+            tree.heading(col, text=f' {heading}')
         values = [(tree.set(child, col), child) for child in tree.get_children('')]
-        
-        # Sort the values in the list
         values.sort(reverse=reverse)
-        
-        # Move the items in the treeview to their sorted positions
         for index, (val, child) in enumerate(values):
             tree.move(child, '', index)
+
+    def showTreeView_OrderList(self, contentFrame):
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=25)
+        tree = ttk.Treeview(contentFrame, height=11)
+        tree["columns"] = ("Time","Customer_name", "Customer_Phone","product", "brand", "category", "color", "quantity", "Selling_Price_M")
+        tree.column("#0", width=50, stretch=False, anchor="center")
+        tree.column("Time", width=200, stretch=False, anchor="center")
+        tree.column("Customer_name", width=200, stretch=False, anchor="center")
+        tree.column("Customer_Phone", width=200, stretch=False, anchor="center")
+        tree.column("product", width=200, stretch=False, anchor="center")
+        tree.column("brand", width=100, stretch=False, anchor="center")
+        tree.column("category", width=100, stretch=False, anchor="center")
+        tree.column("color", width=130, stretch=False, anchor="center")
+        tree.column("quantity", width=100, stretch=False, anchor="center")
+        tree.column("Selling_Price_M", width=100, stretch=False, anchor="center")
+        tree.heading("#0", text="No.", anchor="center")
+        tree.heading("Time", text="Time", anchor="center")
+        tree.heading("Customer_name", text="Customer Name")
+        tree.heading("Customer_Phone", text="Customer Phone", anchor="center")
+        tree.heading("product", text="Product", anchor="center")
+        tree.heading("brand", text="Brand", anchor="center")
+        tree.heading("category", text="Category", anchor="center")
+        tree.heading("color", text="Color", anchor="center")
+        tree.heading("quantity", text="Quantity", anchor="center")
+        tree.heading("Selling_Price_M", text="Selling Price (M)", anchor="center")
+        tree.place(x= 0, y = 0, width = 1000, height = 450)
+        order_list = self.order.get_order_list()
+        for i in range(len(order_list)):
+            tree.insert('', 'end', text=i+1, values=(order_list[i][0], order_list[i][1], order_list[i][2], order_list[i][3], order_list[i][4], order_list[i][5], order_list[i][6], order_list[i][7], order_list[i][8]))
+        # Scrollbar
+        scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
+        scrollBarY.place(x=950, y=0, height=440, width = 20)
+        tree.configure(yscrollcommand=scrollBarY.set)
+        scrollBarX = ttk.Scrollbar(contentFrame, orient="horizontal", command=tree.xview)
+        scrollBarX.place(x=0, y=420, height=20, width = 970)
+        tree.configure(xscrollcommand=scrollBarX.set)
+        return tree
 
     """
         @Override
