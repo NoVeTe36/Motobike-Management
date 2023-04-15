@@ -81,10 +81,13 @@ class Brand:
             return 2
         
     def get_sum_brand(self):
-        self.cursor.execute("select count(name) from brand")
-        result = self.cursor.fetchall()
-        result = result[0][0]
-        return result
+        try:
+            self.cursor.execute("select count(name) from brand")
+            result = self.cursor.fetchall()
+            result = result[0][0]
+            return result
+        except:
+            return 0
     
     def sort(self, index):
         query = "select * from product order by " + index + ";"

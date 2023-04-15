@@ -29,16 +29,57 @@ class HomeController(Controller):
     brand = Brand()
     category = Category()
     order = Order()
-#DASHBOARD
 
+# ----------------------------------------------------------------
+    def on_tree_select(self, event, tree, productEntry):
+        # Get the id of the selected row
+        item = event.widget.selection()[0]
+        # Get the values of the selected row
+        values = tree.item(item, "values")
+        # Store the values in a class variable
+        productEntry.configure(state="normal")
+        productEntry.delete(0, "end")
+        productEntry.insert(0, values[0])
+        productEntry.configure(state="disabled")
+        # return productInput
+        # self.order_list_box(temp_frame, values)
+
+        # Select item, double click to edit
+    def on_select(self, event):
+        selected_item = None
+        if len(event.widget.selection()) > 0:
+            selected_item = event.widget.selection()[0]
+            
+        # perform some action with the selected item
+        if selected_item is not None:
+            selected_item = event.widget.selection()[0]
+            values = event.widget.item(selected_item)['values']
+            edit_view = self.loadEdit("edit",tk.Tk(), values)
+            # reset selected item
+            event.widget.selection_remove(selected_item)
+        # edit_view.showEditView(values)
+
+    # Delete item, press delete button to delete
+    def on_delete(self, event):    
+        selected_items = event.widget.selection()    
+        confirm = messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete the selected item(s)?")
+        if confirm:        
+            for item in selected_items:            
+                item_values = event.widget.item(item, "values")            
+                self.product.delete_product(item_values[0])            
+                event.widget.delete(item)
+
+
+#DASHBOARD
     def get_sum_product(self):
         return str(self.product.get_sum_product())
     def get_sum_brand(self):
         return str(self.brand.get_sum_brand())
     def get_sum_soldproduct(self):
-        return str(self.product.get_sum_product())
+        return str(self.order.count_orders())
     def get_profit(self):
-        return str(self.product.get_sum_product())
+        return str(self.order.total_price())
+    
 
 #ADD_BRAND    
     def btnAdd_Brand(self,entry, tree, contentFrame):
@@ -98,14 +139,14 @@ class HomeController(Controller):
     def btnAdd_Product(self, fields):
         product = []
         response = self.product.check_add_product(fields)
+        if response == -1:
+            messagebox.showerror("Add brand", "Product already exists!")
+            pass
         if response > 0:           
-            messagebox.showinfo("Add brand", "Customer successfully added!")
+            messagebox.showinfo("Add brand", "Product successfully added!")
             for i in range(len(fields)):
                 product.append(fields[i].get())
             self.product.add(fields)
-            pass
-        if response == -1:
-            messagebox.showerror("Add brand", "Product already exists!")
             pass
         else: 
             messagebox.showerror("Add brand", "Some fields are empty or wrong type!")
@@ -171,96 +212,6 @@ class HomeController(Controller):
     def reset_ProductList(self, tree, product_list, contentFrame):
         tree.destroy()
         tree = self.showTreeView_ProductList(contentFrame, product_list)  
-
-    # TREEVIEW IN ORDER PAGE
-
-    def showTreeView_OrderProductList(self, contentFrame, temp_frame):
-        style = ttk.Style()
-        style.configure("Treeview", rowheight=25)
-        tree = ttk.Treeview(contentFrame, height=11)
-        tree["columns"] = ("product", "brand", "category", "color", "quantity", "Selling_Price_M")
-        tree.column("#0", width=50, stretch=False, anchor="center")
-        tree.column("product", width=200, stretch=False, anchor="center")
-        tree.column("brand", width=100, stretch=False, anchor="center")
-        tree.column("category", width=100, stretch=False, anchor="center")
-        tree.column("color", width=130, stretch=False, anchor="center")
-        tree.column("quantity", width=100, stretch=False, anchor="center")
-        tree.column("Selling_Price_M", width=100, stretch=False, anchor="center")
-        tree.heading("#0", text="No.", anchor="center")
-        tree.heading("product", text="Product", anchor="center")
-        tree.heading("brand", text="Brand", anchor="center")
-        tree.heading("category", text="Category", anchor="center")
-        tree.heading("color", text="Color", anchor="center")
-        tree.heading("quantity", text="Quantity", anchor="center")
-        tree.heading("Selling_Price_M", text="Selling Price (M)", anchor="center")
-        tree.place(x= 110, y = 380, width = 800, height = 180)
-        product_list = self.order.get_product_list()
-        for i in range(len(product_list)):
-            tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5]))
-        
-        # Bind the TreeviewSelect event to the on_tree_select method
-        list = None
-        tree.bind("<<TreeviewSelect>>", lambda event: self.on_tree_select(event, tree, temp_frame))
-
-        # Scrollbar
-        scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
-        scrollBarY.place(x=890, y=380, height=180, width = 20)
-        tree.configure(yscrollcommand=scrollBarY.set)
-        # Return the selected values variable instead of the tree object
-        return tree
-
-    def on_tree_select(self, event, tree, temp_frame):
-        # Get the id of the selected row
-        item = event.widget.selection()[0]
-        # Get the values of the selected row
-        values = tree.item(item, "values")
-        # Store the values in a class variable
-        self.order_list_box(temp_frame, values)
-        
-    def order_list_box(self, temp_frame, values):
-        productInput = ttk.Entry(temp_frame, width=50, font=('Helvetica', 14))
-        productInput.place(x=100,y=0)
-        productInput.insert(0, values[0])
-        return productInput
-    
-    def btnAdd_Order(self, fields, temp_frame):
-        order_list = []
-        has_entry = False
-        for child in temp_frame.winfo_children():
-            if isinstance(child, ttk.Entry):
-                has_entry = True
-                break
-        if has_entry:
-            # Bind order_list to entry.get() & delete entry
-            for child in temp_frame.winfo_children():
-                if isinstance(child, ttk.Entry):
-                    order_list.append(child.get())
-                    child.destroy()
-        
-        if len(order_list) > 0:
-            total_product_list = self.order.get_product_list()
-            for i in range(len(total_product_list)):
-                if total_product_list[i][0] == order_list[0]:
-                    order_list.clear()
-                    for j in range(len(total_product_list[i])):
-                        order_list.append(total_product_list[i][j])
-                    break
-        full_order_list = []
-        response = self.order.check_add_order(fields)
-        # tree, order_list = self.showTreeView_OrderProductList(contentFrame)
-        if response > 0 and len(order_list) > 0:
-            messagebox.showinfo("Success", "Add order successfully")
-            for i in range(len(fields)):
-                full_order_list.append(fields[i].get())
-            for i in range(len(order_list)):
-                full_order_list.append(order_list[i])
-            time_order = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            full_order_list.insert(0, time_order)
-            self.order.add(full_order_list)
-        else:
-            messagebox.showinfo("Error", "Add order failed")
-        for i in range(len(fields)):
-            fields[i].delete = (0, 'end')
 
     # #Filter display
     # def filterDropCallback(self,contentFrame,filterDrop):
@@ -413,41 +364,17 @@ class HomeController(Controller):
     #     tree.configure(xscrollcommand=scrollBarX.set)
     #     return tree     
 
-    def btnUpdate_Product(self, fields, fields_old):
+    def btnUpdate_Product(self, fields, fields_old,frame):
         # use update_product function from product class
         for i in range(len(fields)):
             fields[i] =  fields[i].get()
         response = self.product.update_product(fields, fields_old)
         if response == 1:
             messagebox.showinfo("Success", "Update product successfully")
+            frame.destroy()
         else:
             messagebox.showerror("Error", "Update product failed")
 
-
-    # Select item, double click to edit
-    def on_select(self, event):
-        selected_item = None
-        if len(event.widget.selection()) > 0:
-            selected_item = event.widget.selection()[0]
-            
-        # perform some action with the selected item
-        if selected_item is not None:
-            selected_item = event.widget.selection()[0]
-            values = event.widget.item(selected_item)['values']
-            edit_view = self.loadEdit("edit",tk.Tk(), values)
-            # reset selected item
-            event.widget.selection_remove(selected_item)
-        # edit_view.showEditView(values)
-
-    # Delete item, press delete button to delete
-    def on_delete(self, event):    
-        selected_items = event.widget.selection()    
-        confirm = messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete the selected item(s)?")
-        if confirm:        
-            for item in selected_items:            
-                item_values = event.widget.item(item, "values")            
-                self.product.delete_product(item_values[0])            
-                event.widget.delete(item)
     def showTreeView_ProductList(self, contentFrame, searchContent, filterContent, categoryContent, brandContent):
         # print(filterContent)
         style = ttk.Style()
@@ -518,16 +445,15 @@ class HomeController(Controller):
             for i in range(len(displayList)):
                 if searchContent.lower() in displayList[i][0].lower():
                     tree.insert('', 'end', text=i+1, values=(displayList[i][0], displayList[i][1], displayList[i][2], displayList[i][3], displayList[i][4], displayList[i][5], displayList[i][6], displayList[i][7], displayList[i][8], displayList[i][9], displayList[i][10], displayList[i][11], displayList[i][12], displayList[i][13]))
-        self.sort_order = {}
-        # set a tag for each header to call the sort function when clicked using for loop
-        for col in tree["columns"]:
-            self.sort_order[col] = False
-            # if press store the col name in _col then call the sort function
-            tree.heading(col, text=col, command=lambda _col=col: self.treeview_sort_column(tree, _col))
+
+        # self.sort_order = {}
+        # # set a tag for each header to call the sort function when clicked using for loop
+        # for col in tree["columns"]:
+        #     self.sort_order[col] = False
+        #     tree.heading(col, text=col, command=lambda _col=col: self.treeview_sort_column(tree, _col, False))
 
         tree.bind("<Double-1>", self.on_select)
         tree.bind("<Delete>", self.on_delete)
-        # bind the header click event to sort the column ascending or descending
 
         # Scrollbar
         scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
@@ -538,26 +464,97 @@ class HomeController(Controller):
         tree.configure(xscrollcommand=scrollBarX.set)
         return tree
 
-    # function treeview_sort_column pass the col to function sortType in class Product
-    def treeview_sort_column(self, tree, col):
-        if self.sort_order[col]:
-            reverse = True
-            self.sort_order[col] = False
-        else:
-            reverse = False
-            self.sort_order[col] = True
-        heading = tree.heading(col, "text")
-        heading = heading.replace('▲ ', '').replace('▼ ', '')
-        if reverse:
-            tree.heading(col, text=f'▼ {heading}')
-        if not reverse:
-            tree.heading(col, text=f'▲ {heading}')
-        else:
-            tree.heading(col, text=f' {heading}')
-        values = [(tree.set(child, col), child) for child in tree.get_children('')]
-        values.sort(reverse=reverse)
-        for index, (val, child) in enumerate(values):
-            tree.move(child, '', index)
+    # def treeview_sort_column(self, tree, col, reverse):
+    #     l = [(tree.set(k, col), k) for k in tree.get_children('')]
+    #     l.sort(reverse=reverse)
+    #     for index, (val, k) in enumerate(l):
+    #         tree.move(k, '', index)
+    #     tree.heading(col, command=lambda: self.treeview_sort_column(tree, col, not reverse))
+    #     self.sort_order[col] = not reverse
+
+
+    # ORDER LIST
+    def showTreeView_OrderProductList(self, contentFrame, productEntry):
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=25)
+        tree = ttk.Treeview(contentFrame, height=11)
+        tree["columns"] = ("product", "brand", "category", "color", "Selling_Price_M", "quantity")
+        tree.column("#0", width=50, stretch=False, anchor="center")
+        tree.column("product", width=200, stretch=False, anchor="center")
+        tree.column("brand", width=100, stretch=False, anchor="center")
+        tree.column("category", width=100, stretch=False, anchor="center")
+        tree.column("color", width=130, stretch=False, anchor="center")
+        tree.column("Selling_Price_M", width=100, stretch=False, anchor="center")
+        tree.column("quantity", width=100, stretch=False, anchor="center")
+        tree.heading("#0", text="No.", anchor="center")
+        tree.heading("product", text="Product", anchor="center")
+        tree.heading("brand", text="Brand", anchor="center")
+        tree.heading("category", text="Category", anchor="center")
+        tree.heading("color", text="Color", anchor="center")
+        tree.heading("Selling_Price_M", text="Selling Price (M)", anchor="center")
+        tree.heading("quantity", text="Quantity", anchor="center")
+        tree.place(x= 110, y = 380, width = 800, height = 180)
+        product_list = self.order.get_product_list()
+        for i in range(len(product_list)):
+            tree.insert('', 'end', text=i+1, values=(product_list[i][0], product_list[i][1], product_list[i][2], product_list[i][3], product_list[i][4], product_list[i][5]))
+        
+        # Bind the TreeviewSelect event to the on_tree_select method
+        list = None
+        tree.bind("<<TreeviewSelect>>", lambda event: self.on_tree_select(event, tree, productEntry))
+
+        # Scrollbar
+        scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
+        scrollBarY.place(x=890, y=380, height=180, width = 20)
+        tree.configure(yscrollcommand=scrollBarY.set)
+        # Return the selected values variable instead of the tree object
+        return tree
+        
+    # def order_list_box(self, temp_frame, values):
+    #     productInput = ttk.Entry(temp_frame, width=50, font=('Helvetica', 14))
+    #     productInput.place(x=100,y=0)
+    #     productInput.insert(0, values[0])
+    #     return productInput
+    
+    def btnAdd_Order(self, fields, temp_frame):
+        order_list = []
+        has_entry = False
+        for child in temp_frame.winfo_children():
+            if isinstance(child, ttk.Entry):
+                has_entry = True
+                break
+        if has_entry:
+            # Bind order_list to entry.get() & delete entry
+            for child in temp_frame.winfo_children():
+                if isinstance(child, ttk.Entry):
+                    order_list.append(child.get())
+                    # child.destroy()
+        
+        if len(order_list) > 0:
+            total_product_list = self.order.get_product_list()
+            for i in range(len(total_product_list)):
+                if total_product_list[i][0] == order_list[0]:
+                    order_list.clear()
+                    for j in range(len(total_product_list[i])):
+                        order_list.append(total_product_list[i][j])
+                    break
+        full_order_list = []
+        response = self.order.check_add_order(fields, order_list)
+        # tree, order_list = self.showTreeView_OrderProductList(contentFrame)
+        if response == -1:
+            messagebox.showinfo("Error", "Out of stock")
+        if response > 0 and len(order_list) > 0:
+            messagebox.showinfo("Success", "Add order successfully")
+            for i in range(len(fields)):
+                full_order_list.append(fields[i].get())
+            for i in range(len(order_list)):
+                full_order_list.append(order_list[i])
+            time_order = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            full_order_list.insert(0, time_order)
+            self.order.add(full_order_list)
+        if response == 0:
+            messagebox.showinfo("Error", "Add order failed")
+        for i in range(len(fields)):
+            fields[i].delete = (0, 'end')
 
     def showTreeView_OrderList(self, contentFrame):
         style = ttk.Style()

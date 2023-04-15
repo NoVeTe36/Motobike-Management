@@ -164,7 +164,7 @@ class EditView(tk.Tk, View):
             if(Field[i] == ''):
                 Field[i] = Field_old[i]
 
-        updateBtn = HoverButton(self.window,text='Update',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command = lambda: self.homeController.btnUpdate_Product(Field, Field_old))
+        updateBtn = HoverButton(self.window,text='Update',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command = lambda: self.homeController.btnUpdate_Product(Field, Field_old,self.window))
         updateBtn.place(x=670, y = 420)
 
         clearBtn = HoverButton(self.window,text='Clear',bg='#cc0000', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#cc0000', activeforeground='#fff', relief='flat', command = lambda: self.clear())

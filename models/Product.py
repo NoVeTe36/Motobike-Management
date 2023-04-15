@@ -71,10 +71,13 @@ class Product:
         return result
     
     def get_sum_product(self):
-        self.cursor.execute("select sum(quanity) from product")
-        result = self.cursor.fetchall()
-        result = result[0][0]
-        return result
+        try:
+            self.cursor.execute("select sum(quanity) from product")
+            result = self.cursor.fetchall()
+            result = result[0][0]
+            return result
+        except:
+            return 0
     
     def check_add_product(self,fields):
         for i in range(len(fields)):
