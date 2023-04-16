@@ -78,3 +78,7 @@ class Order:
             return result
         except:
             return "0 M"
+        
+    def delete_order(self, name):
+        self.cursor.execute("delete from orders where Customer_Name = %s", (name,))
+        self.db.commit()

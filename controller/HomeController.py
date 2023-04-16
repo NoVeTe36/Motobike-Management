@@ -69,6 +69,15 @@ class HomeController(Controller):
                 self.product.delete_product(item_values[0])            
                 event.widget.delete(item)
 
+    def order_delete(self, event):
+        selected_items = event.widget.selection()
+        confirm = messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete the selected item(s)?")
+        if confirm:
+            for item in selected_items:
+                item_values = event.widget.item(item, "values")
+                self.order.delete_order(item_values[1])
+                event.widget.delete(item)
+
 
 #DASHBOARD
     def get_sum_product(self):
@@ -599,6 +608,7 @@ class HomeController(Controller):
         tree.place(x= 0, y = 0, width = 1000, height = 450)
         order_list = self.order.get_order_list()
         for i in range(len(order_list)):
+            tree.bind("<Delete>", self.order_delete)
             tree.insert('', 'end', text=i+1, values=(order_list[i][0], order_list[i][1], order_list[i][2], order_list[i][3], order_list[i][4], order_list[i][5], order_list[i][6], order_list[i][7], order_list[i][8]))
         # Scrollbar
         scrollBarY = ttk.Scrollbar(contentFrame, orient="vertical", command=tree.yview)
