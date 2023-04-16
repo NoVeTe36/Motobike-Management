@@ -137,6 +137,9 @@ class HomeController(Controller):
     def btnAdd_Product(self, fields):
         product = []
         response = self.product.check_add_product(fields)
+        if response == -1:
+            messagebox.showerror("Add brand", "Product already exists!")
+            pass
         if response > 0:           
             messagebox.showinfo("Add brand", "Product successfully added!")
             for i in range(len(fields)):
