@@ -81,6 +81,7 @@ class SettingUp:
             pass
 
         try:
+            self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS orders (
                 ID INT primary key auto_increment,
@@ -95,5 +96,6 @@ class SettingUp:
                 price NUMERIC(18, 3)
             );
             """
+            )
         except:
             pass

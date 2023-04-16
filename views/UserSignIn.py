@@ -40,7 +40,7 @@ class UserRestorePassword:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="tungntl1234",
+            password="Made@08122003",
             database="motorbikemanagement"
         )
         self.sender_email = 'ml2groupproject@gmail.com'
@@ -97,7 +97,7 @@ class UserRestorePassword:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="tungntl1234",
+            password="Made@08122003",
             database="motorbikemanagement"
         )
         cur = self.conn.cursor()
@@ -124,7 +124,7 @@ class UserRestorePassword:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="tungntl1234",
+            password="Made@08122003",
             database="motorbikemanagement"
         )
         cur = self.conn.cursor()

@@ -2,14 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import mysql.connector
-import pymysql
+import pymysql, os, re, time
 from core.Core import Core
-# import UserSignIn
-# import interface
-import os
-import re
 from hashlib import sha256
-import time
 from views.UserSignIn import UserSignIn as UserSignIn
 from views.HomeView import HomeView as HomeView
 from views.UserSignIn import UserRestorePassword as UserRestorePassword
@@ -28,6 +23,7 @@ class LoginPage(tk.Frame):
         self.create_background()
         self.create_widgets()
         self.move_in()
+        self.window.bind("<Control-w>", lambda e: self.window.destroy())
 
     def create_background(self):
         frameCnt = 12
