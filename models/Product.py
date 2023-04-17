@@ -33,12 +33,20 @@ class Product:
             self.cursor.execute(sql, (fields[0].get(), fields[1].get(), fields[2].get(), fields[3].get(), fields[4].get(), fields[5].get(), fields[6].get(), fields[7].get(), fields[8].get(), fields[9].get(), fields[10].get(), fields[11].get(), fields[12].get(), fields[13].get(),))
             self.db.commit()
 
-            brand_sql = "UPDATE Brand SET quantity = quantity + 1 WHERE (Name = %s)"
-            self.cursor.execute(brand_sql, (fields[1].get(),))
+            # brand_sql = "UPDATE Brand SET quantity = quantity + 1 WHERE (Name = %s)"
+            # self.cursor.execute(brand_sql, (fields[1].get(),))
+            # self.db.commit()
+
+            # category_sql = "UPDATE Category SET quantity = quantity + 1 WHERE (Name = %s)"
+            # self.cursor.execute(category_sql, (fields[2].get(),))
+            # self.db.commit()
+
+            brand_sql = "UPDATE Brand SET quantity = (SELECT SUM(quanity) FROM product WHERE (brand = %s)) WHERE (Name = %s)"
+            self.cursor.execute(brand_sql, (fields[1].get(), fields[1].get(),))
             self.db.commit()
 
-            category_sql = "UPDATE Category SET quantity = quantity + 1 WHERE (Name = %s)"
-            self.cursor.execute(category_sql, (fields[2].get(),))
+            category_sql = "UPDATE Category SET quantity = (SELECT SUM(quanity) FROM product WHERE (category = %s)) WHERE (Name = %s)"
+            self.cursor.execute(category_sql, (fields[2].get(), fields[2].get(),))
             self.db.commit()
 
             response = self.cursor.rowcount
@@ -207,7 +215,4 @@ class Product:
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         print(result)
-        return result
-
-
-    
+        return result   

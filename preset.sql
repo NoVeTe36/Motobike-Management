@@ -57,11 +57,11 @@ CREATE TRIGGER update_brand_quantity AFTER INSERT ON Product
 FOR EACH ROW
 BEGIN
     UPDATE Brand
-    SET quantity = quantity + 1
+    SET quantity = quantity + new.quanity
     WHERE name = new.Brand;
     
     UPDATE Category
-    SET quantity = quantity + 1
+    SET quantity = quantity + new.quanity
     WHERE name = new.Category;
 END $$
 DELIMITER ;
