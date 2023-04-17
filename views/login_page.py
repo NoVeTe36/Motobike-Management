@@ -567,7 +567,8 @@ class ForgotPass(tk.Frame):
                 return
 
     def create_widgets2(self):
-        self.label_username.destroy()
+        self.entry_user = self.entry_username.get()
+        self.entry_username.destroy()
         self.label_username.destroy()
         self.label_email.destroy()
         self.entry_email.destroy()
