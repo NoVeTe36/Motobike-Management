@@ -4,10 +4,12 @@ from views.HomeView import HoverButton as HoverButton
 from views.View import View
 
 class EditView(tk.Tk, View):
-    def __init__(self,controller, root, values):
+    def __init__(self,controller, root, values, frame, productFrame):
         #Main
         self.window = root
         self.homeController = controller
+        self.frame = frame
+        self.productFrame = productFrame
         self.window.geometry("880x480")
         self.window.configure(bg = "#cccccc")
         self.window.resizable(False, False)
@@ -164,7 +166,7 @@ class EditView(tk.Tk, View):
             if(Field[i] == ''):
                 Field[i] = Field_old[i]
 
-        updateBtn = HoverButton(self.window,text='Update',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command = lambda: self.homeController.btnUpdate_Product(Field, Field_old))
+        updateBtn = HoverButton(self.window,text='Update',bg='#238636', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#238636', activeforeground='#fff', relief='flat', command = lambda: self.homeController.btnUpdate_Product(Field, Field_old, self.window, self.frame, self.productFrame)) 
         updateBtn.place(x=670, y = 420)
 
         clearBtn = HoverButton(self.window,text='Clear',bg='#cc0000', fg='#fff', font=('Helvetica', 10, 'bold'), width=10, activebackground='#cc0000', activeforeground='#fff', relief='flat', command = lambda: self.clear())

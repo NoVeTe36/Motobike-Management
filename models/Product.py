@@ -1,5 +1,4 @@
 import mysql.connector
-from db.settingup import SettingUp
 
 """
     This class is used to create a product object    
@@ -15,7 +14,6 @@ class Product:
             charset="utf8"
         )
         self.cursor = self.db.cursor()
-        SettingUp()
 
     # add a product to database include name, price, quantity, category
     def add(self, fields):
@@ -26,6 +24,7 @@ class Product:
         # check if the product is already in database
         self.cursor.execute("select * from product where (Name = %s)", (fields[0].get(),))
         result = self.cursor.fetchall()
+        self.db.commit()
         if result:
             pass
         else:
@@ -33,15 +32,24 @@ class Product:
             self.cursor.execute(sql, (fields[0].get(), fields[1].get(), fields[2].get(), fields[3].get(), fields[4].get(), fields[5].get(), fields[6].get(), fields[7].get(), fields[8].get(), fields[9].get(), fields[10].get(), fields[11].get(), fields[12].get(), fields[13].get(),))
             self.db.commit()
 
-            brand_sql = "UPDATE Brand SET quantity = quantity + 1 WHERE (Name = %s)"
-            self.cursor.execute(brand_sql, (fields[1].get(),))
+            # brand_sql = "UPDATE Brand SET quantity = quantity + 1 WHERE (Name = %s)"
+            # self.cursor.execute(brand_sql, (fields[1].get(),))
+            # self.db.commit()
+
+            # category_sql = "UPDATE Category SET quantity = quantity + 1 WHERE (Name = %s)"
+            # self.cursor.execute(category_sql, (fields[2].get(),))
+            # self.db.commit()
+
+            brand_sql = "UPDATE Brand SET quantity = (SELECT SUM(quanity) FROM product WHERE (brand = %s)) WHERE (Name = %s)"
+            self.cursor.execute(brand_sql, (fields[1].get(), fields[1].get(),))
             self.db.commit()
 
-            category_sql = "UPDATE Category SET quantity = quantity + 1 WHERE (Name = %s)"
-            self.cursor.execute(category_sql, (fields[2].get(),))
+            category_sql = "UPDATE Category SET quantity = (SELECT SUM(quanity) FROM product WHERE (category = %s)) WHERE (Name = %s)"
+            self.cursor.execute(category_sql, (fields[2].get(), fields[2].get(),))
             self.db.commit()
 
             response = self.cursor.rowcount
+            self.db.commit()
         return response
     
     def delete(self, name):
@@ -54,8 +62,8 @@ class Product:
         else:
             sql = "DELETE FROM product WHERE (Name = %s)"
             self.cursor.execute(sql, (name,))
-            self.db.commit()
             response = self.cursor.rowcount
+            self.db.commit()
         return response
     
     def getName(self, name):
@@ -66,15 +74,20 @@ class Product:
         return result
     
     def get_brand_list(self):
-        self.cursor.execute("select name from product")
+        self.cursor.execute("select name, quantity from brand")
         result = self.cursor.fetchall()
+        self.db.commit()
         return result
     
     def get_sum_product(self):
-        self.cursor.execute("select sum(quanity) from product")
-        result = self.cursor.fetchall()
-        result = result[0][0]
-        return result
+        try:
+            self.cursor.execute("select sum(quanity) from product")
+            result = self.cursor.fetchall()
+            result = str(result[0][0])
+            self.db.commit()
+            return result
+        except:
+            return "0"
     
     def check_add_product(self,fields):
         for i in range(len(fields)):
@@ -85,6 +98,7 @@ class Product:
                 return 0
         self.cursor.execute("select * from product where (Name = %s)", (fields[0].get(),))
         result = self.cursor.fetchall()
+        self.db.commit()
         if result:
             return -1
         return 1
@@ -125,12 +139,14 @@ class Product:
         if fields[0] == fields_old[0]:
             self.cursor.execute("SELECT * FROM product WHERE Name != %s", (fields_old[0],))
             result = self.cursor.fetchall()
+            self.db.commit()
             if not result:
                 return response
         else:            
             # check if the product is already in database
             self.cursor.execute("SELECT * FROM product WHERE Name = %s", (fields[0],))
             result = self.cursor.fetchall()
+            self.db.commit()
             if result:
                 return response
             
@@ -152,7 +168,7 @@ class Product:
         # after update, check if the brand and category are changed
         if fields[1] != fields_old[1]:
             # update brand quantity
-            brand_sql = "UPDATE Brand SET quantity = quantity - 1 WHERE (Name = %s)"
+            brand_sql = "UPDATE Brand SET quantity = quantity WHERE (Name = %s)"
             self.cursor.execute(brand_sql, (fields_old[1],))
             self.db.commit()
 
@@ -170,6 +186,18 @@ class Product:
             self.cursor.execute(category_sql, (fields[2],))
             self.db.commit()
 
+        #if brand or cate is not changed, update brand and cate quantity
+        if fields[1] == fields_old[1] and fields[2] == fields_old[2]:
+            if fields[13] != fields_old[13]:
+                brand_sql = "UPDATE Brand SET quantity = quantity + %s WHERE (Name = %s)"
+                self.cursor.execute(brand_sql, (int(fields[13]) - int(fields_old[13]), fields[1]))
+                self.db.commit()
+
+                category_sql = "UPDATE Category SET quantity = quantity + %s WHERE (Name = %s)"
+                self.cursor.execute(category_sql, (int(fields[13]) - int(fields_old[13]), fields[2]))
+                self.db.commit()
+
+        self.db.commit()
         return response
     
     def sort(self, index):
@@ -203,8 +231,4 @@ class Product:
         query = "select name, brand, category, length_mm, width_mm, height_mm, mass_kg, fuel_capacity_l, fuel_consumption_l_100km, engine_type, Maximize_Efficiency_kW_minute, color, Selling_Price_M, quanity from product order by " + index + " " + type + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
-        print(result)
-        return result
-
-
-    
+        return result   

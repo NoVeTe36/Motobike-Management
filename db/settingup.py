@@ -67,11 +67,11 @@ class SettingUp:
                 FOR EACH ROW
                 BEGIN
                     UPDATE Brand
-                    SET quantity = quantity + 1
+                    SET quantity = quantity + new.quanity
                     WHERE name = new.Brand;
                     
                     UPDATE Category
-                    SET quantity = quantity + 1
+                    SET quantity = quantity + new.quanity
                     WHERE name = new.Category;
                 END $$
                 DELIMITER ;
@@ -81,6 +81,7 @@ class SettingUp:
             pass
 
         try:
+            self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS orders (
                 ID INT primary key auto_increment,
@@ -95,5 +96,6 @@ class SettingUp:
                 price NUMERIC(18, 3)
             );
             """
+            )
         except:
             pass

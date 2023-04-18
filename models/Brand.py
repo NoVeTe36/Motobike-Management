@@ -1,5 +1,4 @@
 import mysql.connector
-from db.settingup import SettingUp
 
 """
     This class is used to create a brand object
@@ -15,7 +14,6 @@ class Brand:
             charset="utf8"
         )
         self.cursor = self.db.cursor()
-        SettingUp()
 
     def add(self, name):
         response = 0
@@ -50,26 +48,29 @@ class Brand:
         # check if the brand is in database or not
         self.cursor.execute("SELECT * FROM brand WHERE (Name = %s)", (name,))
         result = self.cursor.fetchall()
+        self.db.commit()
         if len(result) == 0:
             pass
         else:
             sql = "UPDATE brand SET Name = %s WHERE Name = %s"
             self.cursor.execute(sql, (newName, name,))
-            self.db.commit()
             response = self.cursor.rowcount
+            self.db.commit()
         return response
         
     def get(self, name):
         query = "SELECT * FROM brand WHERE name LIKE %s;"
         self.cursor.execute(query, ('%' + name + '%',))
-        self.db.commit()
         result = self.cursor.fetchall()
+        self.db.commit()
         return result
     
     
     def get_brand_list(self):
+        result = []
         self.cursor.execute("select name, quantity from brand")
         result = self.cursor.fetchall()
+        self.db.commit()
         return result
 
     def check_add_brand(self, fields, brand_list):
@@ -79,21 +80,28 @@ class Brand:
             return 1
         else:
             return 2
+    
         
     def get_sum_brand(self):
-        self.cursor.execute("select count(name) from brand")
-        result = self.cursor.fetchall()
-        result = result[0][0]
-        return result
+        try:
+            self.cursor.execute("select count(name) from brand")
+            result = self.cursor.fetchall()
+            result = result[0][0]
+            self.db.commit()
+            return result
+        except:
+            return 0
     
     def sort(self, index):
         query = "select * from product order by " + index + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
+        self.db.commit()
         return result
     
     def filter(self, index):
         query = "select * from product where " + index + ";"
         self.cursor.execute(query)
         result = self.cursor.fetchall()
+        self.db.commit()
         return result

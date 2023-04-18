@@ -15,7 +15,6 @@ class Category:
             charset="utf8"
         )
         self.cursor = self.db.cursor()
-        SettingUp()
 
     def add(self, name):
         response = 0
@@ -27,8 +26,8 @@ class Category:
         else:
             sql = "INSERT INTO category (Name) VALUES (%s)"
             self.cursor.execute(sql, (name,))
-            self.db.commit()
             response = self.cursor.rowcount
+            self.db.commit()
         return response
         
     def delete(self, name):
@@ -41,8 +40,8 @@ class Category:
         else:
             sql = "DELETE FROM category WHERE (Name = %s)"
             self.cursor.execute(sql, (name,))
-            self.db.commit()
             response = self.cursor.rowcount
+            self.db.commit()
         return response
     
     def update(self, name, newName):
@@ -55,15 +54,15 @@ class Category:
         else:
             sql = "UPDATE category SET Name = %s WHERE Name = %s"
             self.cursor.execute(sql, (newName, name))
-            self.db.commit()
             response = self.cursor.rowcount
+            self.db.commit()
         return response
     
     def get(self, name):
         query = "SELECT * FROM category WHERE name LIKE %s;"
         self.cursor.execute(query, ('%' + name + '%',))
-        self.db.commit()
         result = self.cursor.fetchall()
+        self.db.commit()
         return result
     
     # def get_all(self):
@@ -81,6 +80,7 @@ class Category:
     def get_category_list(self):
         self.cursor.execute("select name, quantity from category")
         result = self.cursor.fetchall()
+        self.db.commit()
         return result
     
     def add_category(self, fields, category_list):
@@ -93,4 +93,5 @@ class Category:
         self.cursor.execute("select count(name) from category")
         result = self.cursor.fetchall()
         result = result[0][0]
+        self.db.commit()
         return result

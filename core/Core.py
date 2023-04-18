@@ -16,17 +16,16 @@ class Core:
         @param controller:string Controller to be opened
     """
     @staticmethod
-    def openController(controller,root):
+    def openController(controller,root,user):
         response = None
         # Set controller name
         controller = controller[0].upper()+controller[1:]
         controllerName = controller+"Controller"
-        print(controllerName)
         # Check if file exists
         if os.path.exists(APP_PATH+"/controller/"+controllerName+".py"):
             module = importlib.import_module("controller." + controllerName)
             class_ = getattr(module, controllerName)
-            response = class_(root)
+            response = class_(root,user)
         else:
             print("Error")
         return response

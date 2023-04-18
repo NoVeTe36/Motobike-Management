@@ -2,7 +2,6 @@ import os
 import importlib
 from config import APP_PATH
 import abc
-import tkinter as tk 
 
 """
     Responsible for the communication between views and models in addiction to
@@ -24,7 +23,7 @@ class Controller(metaclass=abc.ABCMeta):
     
         @param viewName:string View to be opened
     """
-    def loadView(self, viewName,root):
+    def loadView(self, viewName,root, user):
         response = None
         
         # Set view name
@@ -34,11 +33,11 @@ class Controller(metaclass=abc.ABCMeta):
         if os.path.exists(APP_PATH+"/views/"+viewName+".py"):
             module = importlib.import_module("views." + viewName)
             class_ = getattr(module, viewName)
-            response = class_(self, root)
+            response = class_(self, root, user)
         
         return response
     
-    def loadEdit(self, viewName, root, values):
+    def loadEdit(self, viewName, root, values, frame, productFrame):
         response = None
         
         # Set view name
@@ -48,6 +47,6 @@ class Controller(metaclass=abc.ABCMeta):
         if os.path.exists(APP_PATH+"/views/"+viewName+".py"):
             module = importlib.import_module("views." + viewName)
             class_ = getattr(module, viewName)
-            response = class_(self, root, values)
+            response = class_(self, root, values, frame, productFrame)
         
         return response
