@@ -99,7 +99,7 @@ class AddProductView:
         Field.append(colorInput)
 
         # Input selling price
-        tk.Label(inputFrame, text="Selling price:",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=30, y=330)
+        tk.Label(inputFrame, text="Selling price(M):",font=('Helvetica', 14, 'bold'), bg='#cccccc').place(x=30, y=330)
         sellingPriceInput = ttk.Entry(inputFrame, width=15, font=('Helvetica', 14))
         sellingPriceInput.place(x=230,y=330)
         Field.append(sellingPriceInput)
