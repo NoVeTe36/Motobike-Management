@@ -18,7 +18,7 @@ class LoginPage(tk.Frame):
         global screen_width, screen_height
         self.screen_width = self.window.winfo_screenwidth()
         self.screen_height = self.window.winfo_screenheight()
-        self.window.geometry(f"{int(self.screen_width*3/4)}x{int(self.screen_height*3/4)}")
+        self.window.geometry(f"{int(self.screen_width*3/4)}x{int(self.screen_height*3/4)}+100+50")
         self.window.configure(background="#cc0000")
         self.create_background()
         self.create_widgets()
@@ -156,7 +156,6 @@ class LoginPage(tk.Frame):
                 # switch to interface.py
                 for widget in self.window.winfo_children():
                     widget.destroy()
-                # self.destroy()
                 try:
                     app = Core.openController("home", self.window, username)           
                     app.main()
