@@ -37,7 +37,11 @@ class Controller(metaclass=abc.ABCMeta):
         
         return response
     
+<<<<<<< HEAD
     def loadEdit(self, viewName, root, values, frame, productFrame):
+=======
+    def loadEdit(self, viewName, root, values, frame):
+>>>>>>> bff783b705449f3d7d2a00ee2d13ee759464cb5f
         response = None
         
         # Set view name
@@ -47,6 +51,10 @@ class Controller(metaclass=abc.ABCMeta):
         if os.path.exists(APP_PATH+"/views/"+viewName+".py"):
             module = importlib.import_module("views." + viewName)
             class_ = getattr(module, viewName)
+<<<<<<< HEAD
             response = class_(self, root, values, frame, productFrame)
+=======
+            response = class_(self, root, values, frame)
+>>>>>>> bff783b705449f3d7d2a00ee2d13ee759464cb5f
         
         return response

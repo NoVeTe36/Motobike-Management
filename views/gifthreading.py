@@ -3,7 +3,6 @@ import threading
 import tkinter as tk
 
 
-
 class GifThread(threading.Thread):
     def __init__(self, window, label, frameCnt, file_name, x, y, color):
         threading.Thread.__init__(self)

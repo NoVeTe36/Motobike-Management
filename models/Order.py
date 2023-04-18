@@ -53,7 +53,10 @@ class Order:
     def get_order_list(self):
         self.cursor.execute("select Date, Customer_Name, Customer_Phone, Model, Brand, Category, Color, quantity, price from orders")
         result = self.cursor.fetchall()
+<<<<<<< HEAD
         self.db.commit()
+=======
+>>>>>>> bff783b705449f3d7d2a00ee2d13ee759464cb5f
         return result
     
     def count_orders(self):
@@ -61,7 +64,10 @@ class Order:
             self.cursor.execute("select count(*) from orders")
             result = self.cursor.fetchall()
             result = str(result[0][0])
+<<<<<<< HEAD
             self.db.commit()
+=======
+>>>>>>> bff783b705449f3d7d2a00ee2d13ee759464cb5f
             return result
         except:
             return "0"
@@ -76,11 +82,15 @@ class Order:
                 result = "{:.3f}".format(result[0][0]/1000) + " B"
             else:
                 result = str(result[0][0]) + " M"
+<<<<<<< HEAD
             self.db.commit()
+=======
+>>>>>>> bff783b705449f3d7d2a00ee2d13ee759464cb5f
             return result
         except:
             return "0 M"
         
+<<<<<<< HEAD
     def delete_order(self, customer_name, model, brand, category):
         self.cursor.execute("delete from orders where Customer_Name = %s", (customer_name,))
         self.db.commit()
@@ -108,3 +118,8 @@ class Order:
             self.db.commit()
         except:
             pass
+=======
+    def delete_order(self, name):
+        self.cursor.execute("delete from orders where Customer_Name = %s", (name,))
+        self.db.commit()
+>>>>>>> bff783b705449f3d7d2a00ee2d13ee759464cb5f
